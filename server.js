@@ -105,6 +105,8 @@ function dispatchRealTask(agent, rawInput) {
   let isSystemCommand = false;
 
   const lower = text.toLowerCase();
+  const isGreetingOrCasual = /^(hola|buenos d[ií]as|buenas tardes|buenas noches|hey|hello|hi|que tal|c[oó]mo est[aá]s?|que haces\??|saludos|alberto|luigi|gabri|carlo|bruno)\b/i.test(lower.trim());
+
   if (lower.includes('graphify') || lower.includes('grafo') || lower.includes('knowledge graph')) {
     targetCmd = WHITELISTED_COMMANDS['graphify_stats'];
     isSystemCommand = true;
@@ -126,6 +128,50 @@ function dispatchRealTask(agent, rawInput) {
   } else if (WHITELISTED_COMMANDS[lower]) {
     targetCmd = WHITELISTED_COMMANDS[lower];
     isSystemCommand = true;
+  }
+
+  // Si es solo un saludo o mensaje conversacional breve, responder inmediatamente sin bloquear la cola Kanban
+  if (isGreetingOrCasual && !isSystemCommand && text.split(/\s+/).length <= 4) {
+    const greetingReplies = {
+      10: `¡Hola! Aquí Alberto (CEO). El equipo está listo y operativo. ¿Qué directiva o sprint deseas priorizar hoy?`,
+      6: `¡Hola! Luigi a la orden. Módulos de NestJS, base de datos PostgreSQL nativa y endpoints listos. ¿Qué implementamos?`,
+      7: `¡Buenas! Gabri aquí. App en Expo y Landing Web en Vite sincronizadas. ¿En qué vista trabajamos?`,
+      8: `Saludos. Carlo listo para auditorías de seguridad, código y matriz de permisos. Indícame qué verificar.`,
+      9: `¡Hola! Bruno al habla. Bóveda de Obsidian y grafos de Graphify actualizados. ¿Qué auditamos?`
+    };
+    const replyText = greetingReplies[agent.id] || `¡Hola! ${agent.name} a la orden. ¿Qué tarea deseas asignar?`;
+    const logReply = `[${now.toLocaleTimeString()}] 💬 ${replyText}`;
+    agent.logs.push(`[${now.toLocaleTimeString()}] ⚡ ${text}`);
+    agent.logs.push(logReply);
+
+    broadcast({
+      type: 'commandResult',
+      id: agent.id,
+      agentId: agent.id,
+      taskId: taskId,
+      command: text,
+      output: replyText,
+      exitCode: 0,
+      time: now.toLocaleTimeString()
+    });
+
+    broadcast({
+      type: 'agentActivity',
+      id: agent.id,
+      agentId: agent.id,
+      tool: 'Chat',
+      status: 'In attesa di istruzioni (Idle)',
+      text: replyText,
+      content: replyText,
+      log: logReply
+    });
+
+    setTimeout(() => {
+      broadcast({ type: 'agentToolsClear', id: agent.id, agentId: agent.id });
+      broadcast({ type: 'agentStatus', id: agent.id, agentId: agent.id, status: 'waiting' });
+    }, 1200);
+
+    return;
   }
 
   const tasks = loadTaskQueue();
