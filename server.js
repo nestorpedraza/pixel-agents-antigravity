@@ -175,12 +175,12 @@ function dispatchRealTask(agent, rawInput) {
       replyText = `La hora actual del sistema es ${nowLocal.toLocaleTimeString()}.`;
     } else {
       const greetingReplies = {
-        10: `¡Hola! Aquí Alberto (CEO). La sala operativa está en orden. Recuerda que Nestor (PO) es el encargado de levantar requerimientos formales al tablero. ¿En qué puedo orientarte?`,
-        11: `¡Hola! Nestor (PO) a la orden. Si tienes una nueva feature o hipótesis para Buskdos, indícamela y redactaré la historia con criterios BDD para que la apruebes.`,
-        6: `¡Hola! Luigi a la orden. Backend NestJS y PostgreSQL dedicados listos.`,
-        7: `¡Buenas! Gabri aquí. App móvil y Landing web sincronizadas.`,
-        8: `Saludos. Carlo listo para revisiones de seguridad y RBAC.`,
-        9: `¡Hola! Bruno al habla. Grafo de Graphify y Obsidian sincronizados.`
+        1: `¡Hola! Aquí Alberto (CEO). La sala operativa está en orden. Recuerda que Nestor (PO) es el encargado de levantar requerimientos formales al tablero. ¿En qué puedo orientarte?`,
+        2: `¡Hola! Bruno al habla. Grafo de Graphify y Obsidian sincronizados.`,
+        3: `¡Hola! Nestor (PO) a la orden. Si tienes una nueva feature o hipótesis para Buskdos, indícamela y redactaré la historia con criterios BDD para que la apruebes.`,
+        4: `¡Hola! Luigi a la orden. Backend NestJS y PostgreSQL dedicados listos.`,
+        5: `¡Buenas! Gabri aquí. App móvil y Landing web sincronizadas.`,
+        6: `Saludos. Carlo listo para revisiones de seguridad y RBAC.`
       };
       replyText = greetingReplies[agent.id] || `¡Hola! ${agent.name} a la orden.`;
     }
@@ -378,9 +378,9 @@ function dispatchRealTask(agent, rawInput) {
     agent.logs.push(logForward);
 
     // Se il comando viene assegnato a un membro del team diverso da Alberto (o se il prompt per Alberto nomina un collega), mostra Alberto che cammina a consegnargli il compito!
-    if (agent.id !== 10) {
+    if (agent.id !== 1) {
       recordFlowEvent({
-        fromAgentId: 10,
+        fromAgentId: 1,
         fromName: 'Alberto (CEO)',
         toAgentId: agent.id,
         toName: agent.name,
@@ -389,7 +389,7 @@ function dispatchRealTask(agent, rawInput) {
       });
       broadcast({
         type: 'agentDelegation',
-        fromAgentId: 10,
+        fromAgentId: 1,
         toAgentId: agent.id,
         fromName: 'Alberto (CEO)',
         toName: agent.name,
@@ -397,11 +397,11 @@ function dispatchRealTask(agent, rawInput) {
       });
     } else {
       const lower = text.toLowerCase();
-      const mentioned = lower.includes('luigi') ? 6 : (lower.includes('gabri') ? 7 : (lower.includes('carlo') ? 8 : (lower.includes('bruno') ? 9 : (lower.includes('nestor') ? 11 : null))));
+      const mentioned = lower.includes('bruno') ? 2 : (lower.includes('nestor') ? 3 : (lower.includes('luigi') ? 4 : (lower.includes('gabri') ? 5 : (lower.includes('carlo') ? 6 : null))));
       if (mentioned) {
         const destAgent = TEAM.find(a => a.id === mentioned);
         recordFlowEvent({
-          fromAgentId: 10,
+          fromAgentId: 1,
           fromName: 'Alberto (CEO)',
           toAgentId: mentioned,
           toName: destAgent ? destAgent.name : `Agente ${mentioned}`,
@@ -410,7 +410,7 @@ function dispatchRealTask(agent, rawInput) {
         });
         broadcast({
           type: 'agentDelegation',
-          fromAgentId: 10,
+          fromAgentId: 1,
           toAgentId: mentioned,
           fromName: 'Alberto (CEO)',
           toName: destAgent ? destAgent.name : `Agente ${mentioned}`,
@@ -992,12 +992,12 @@ function sendOfficeInitProtocol(ws) {
   });
 
   const LOUNGE_SOFA_SEATS = {
-    10: 'f-1773354668333-lo7w', // Divano Nord
-    6:  'f-1773354664329-hxsh', // Divano Ovest
-    7:  'f-1773354670818-r1q2', // Divano Est
-    8:  'f-1773354665989-zgrw', // Divano Sud
-    9:  'f-1773354877474-kt9s', // Silla relax
-    11: 'f-1773356770003-nestsofa' // Silla relax Nestor
+    1: 'f-1773354668333-lo7w', // Divano Nord (Alberto)
+    2: 'f-1773354877474-kt9s', // Silla relax (Bruno)
+    3: 'f-1773356770003-nestsofa', // Silla relax (Nestor)
+    4: 'f-1773354664329-hxsh', // Divano Ovest (Luigi)
+    5: 'f-1773354670818-r1q2', // Divano Est (Gabri)
+    6: 'f-1773354665989-zgrw'  // Divano Sud (Carlo)
   };
 
   const agentIds = TEAM.map(a => a.id);
@@ -1687,7 +1687,7 @@ app.post('/api/tasks/create', (req, res) => {
   const taskEntry = {
     id: newTaskId,
     timestamp: now.toISOString(),
-    agentId: Number(targetAgentId || 11), // Por defecto Nestor PO
+    agentId: Number(targetAgentId || 3), // Por defecto Nestor PO (ID 3)
     agentName: targetAgentName || 'Nestor (Product Owner)',
     createdBy: 'Nestor (Product Owner)',
     category: 'sdd_spec',
@@ -1715,7 +1715,7 @@ app.post('/api/tasks/create', (req, res) => {
   saveTaskQueue(tasks);
 
   recordFlowEvent({
-    fromAgentId: 11,
+    fromAgentId: 3,
     fromName: 'Nestor (Product Owner)',
     toAgentId: 0,
     toName: 'Entidad Suprema (Usuario)',

@@ -3,21 +3,21 @@ const fs = require('fs');
 const path = require('path');
 
 const DEFAULT_PRIMARY = {
-  10: '00000000-0000-4000-8000-000000000010', // Alberto (CEO)
-  6:  '00000000-0000-4000-8000-000000000006', // Luigi (Backend)
-  7:  '00000000-0000-4000-8000-000000000007', // Gabri (Frontend)
-  8:  '00000000-0000-4000-8000-000000000008', // Carlo (QA)
-  9:  '00000000-0000-4000-8000-000000000009', // Bruno (Auditor Negocio / Obsidian / Graphify)
-  11: '00000000-0000-4000-8000-000000000011'  // Nestor (Product Owner & PM)
+  1: '00000000-0000-4000-8000-000000000001', // Alberto (CEO)
+  2: '00000000-0000-4000-8000-000000000002', // Bruno (Auditor Negocio)
+  3: '00000000-0000-4000-8000-000000000003', // Nestor (Product Owner & PM)
+  4: '00000000-0000-4000-8000-000000000004', // Luigi (Backend)
+  5: '00000000-0000-4000-8000-000000000005', // Gabri (Frontend)
+  6: '00000000-0000-4000-8000-000000000006'  // Carlo (QA & Seguridad)
 };
 
 const DEFAULT_ALTEREGO = {
-  10: '00000000-0000-4000-9000-000000000010', // alberto-ceo-alterego
-  6:  '00000000-0000-4000-9000-000000000006', // luigi-backend-alterego
-  7:  '00000000-0000-4000-9000-000000000007', // gabri-frontend-alterego
-  8:  '00000000-0000-4000-9000-000000000008', // carlo-revisor-alterego
-  9:  '00000000-0000-4000-9000-000000000009', // bruno-auditor-alterego
-  11: '00000000-0000-4000-9000-000000000011'  // nestor-po-alterego
+  1: '00000000-0000-4000-9000-000000000001', // alberto-ceo-alterego
+  2: '00000000-0000-4000-9000-000000000002', // bruno-auditor-alterego
+  3: '00000000-0000-4000-9000-000000000003', // nestor-po-alterego
+  4: '00000000-0000-4000-9000-000000000004', // luigi-backend-alterego
+  5: '00000000-0000-4000-9000-000000000005', // gabri-frontend-alterego
+  6: '00000000-0000-4000-9000-000000000006'  // carlo-revisor-alterego
 };
 
 let PRIMARY = { ...DEFAULT_PRIMARY };

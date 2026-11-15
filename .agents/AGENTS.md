@@ -10,12 +10,12 @@ Bienvenido a **BuskdosAI**. Este proyecto opera con una jerarquía persistente d
 
 | Rol | Nombre Predeterminado | Agent ID | Modelo Principal | Permisos |
 | :--- | :--- | :---: | :--- | :--- |
-| **CEO & Orquestador** | **Alberto** | `10` | Gemini Flash / Pro | Acceso Total y Delegación de Tareas |
-| **Product Owner & PM** | **Nestor** | `11` | Gemini Flash / Pro | Product Discovery, Hipótesis, Historias BDD y Refinamiento |
-| **Ingeniero Backend** | **Luigi** | `6` | Gemini Flash / Pro | I/O Servidor, APIs, RPC y Terminal |
-| **Arquitecto Frontend** | **Gabri** | `7` | Gemini Flash | Web UI, Canvas 2D, CSS y UX |
-| **Revisor de QA & Seguridad** | **Carlo** | `8` | Gemini Flash / Pro | **Estricto Solo Lectura** (Auditoría de Seguridad y QA) |
-| **Auditor de Negocio** | **Bruno** | `9` | Gemini Flash / Pro | Obsidian Vault & Grafo Graphify |
+| **CEO & Orquestador** | **Alberto** | `1` | Gemini Flash / Pro | Acceso Total y Delegación de Tareas |
+| **Auditor de Negocio** | **Bruno** | `2` | Gemini Flash / Pro | Obsidian Vault, Graphify y Reglas de Negocio |
+| **Product Owner & PM** | **Nestor** | `3` | Gemini Flash / Pro | Product Discovery, SDD, Historias BDD y Refinamiento |
+| **Ingeniero Backend** | **Luigi** | `4` | Gemini Flash / Pro | PostgreSQL nativo, NestJS, APIs, RPC y Terminal |
+| **Arquitecto Frontend** | **Gabri** | `5` | Gemini Flash | App móvil React Native/Expo, Landing Vite e i18n |
+| **Revisor de QA & Seguridad** | **Carlo** | `6` | Gemini Flash / Pro | **Estricto Solo Lectura** (Auditoría de Seguridad, RBAC y QA) |
 
 ---
 
