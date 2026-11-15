@@ -135,7 +135,8 @@ function dispatchRealTask(agent, rawInput) {
   let isSystemCommand = false;
 
   const lower = text.toLowerCase();
-  const isGreetingOrCasual = /^(hola|buenos d[ií]as|buenas tardes|buenas noches|hey|hello|hi|que tal|c[oó]mo est[aá]s?|que haces\??|saludos|alberto|luigi|gabri|carlo|bruno)\b/i.test(lower.trim());
+  const isQuestionOrChat = /^(\?|¿|que|qué|como|cómo|cuando|cuándo|donde|dónde|por que|por qué|porque|quien|quién|cual|cuál|cuanto|cuánto|hora|fecha|dia|día)\b/i.test(lower.trim()) || lower.includes('?') || lower.includes('¿');
+  const isGreetingOrCasual = /^(hola|buenos d[ií]as|buenas tardes|buenas noches|hey|hello|hi|que tal|c[oó]mo est[aá]s?|que haces\??|saludos|alberto|luigi|gabri|carlo|bruno|nestor)\b/i.test(lower.trim());
 
   if (lower.includes('graphify') || lower.includes('grafo') || lower.includes('knowledge graph')) {
     targetCmd = WHITELISTED_COMMANDS['graphify_stats'];
@@ -160,19 +161,32 @@ function dispatchRealTask(agent, rawInput) {
     isSystemCommand = true;
   }
 
-  // Si es solo un saludo o mensaje conversacional breve, responder inmediatamente sin bloquear la cola Kanban
-  if (isGreetingOrCasual && !isSystemCommand && text.split(/\s+/).length <= 4) {
-    const greetingReplies = {
-      10: `¡Hola! Aquí Alberto (CEO). El equipo está listo y operativo. ¿Qué directiva o sprint deseas priorizar hoy?`,
-      6: `¡Hola! Luigi a la orden. Módulos de NestJS, base de datos PostgreSQL nativa y endpoints listos. ¿Qué implementamos?`,
-      7: `¡Buenas! Gabri aquí. App en Expo y Landing Web en Vite sincronizadas. ¿En qué vista trabajamos?`,
-      8: `Saludos. Carlo listo para auditorías de seguridad, código y matriz de permisos. Indícame qué verificar.`,
-      9: `¡Hola! Bruno al habla. Bóveda de Obsidian y grafos de Graphify actualizados. ¿Qué auditamos?`,
-      11: `¡Hola! Nestor aquí. Enfocado en Product Discovery y refinamiento de historias de usuario. ¿Qué hipótesis o requerimiento validamos?`
-    };
-    const replyText = greetingReplies[agent.id] || `¡Hola! ${agent.name} a la orden. ¿Qué tarea deseas asignar?`;
+  // REGLA FUNDAMENTAL: Solo Nestor (PO) o una orden explícita monta tareas al tablero.
+  // Preguntas cotidianas (ej: "¿qué día es hoy?", "¿cómo estás?"), saludos o consultas NO son tareas de desarrollo.
+  if ((isGreetingOrCasual || isQuestionOrChat) && !isSystemCommand && !lower.includes('crear tarea') && !lower.includes('crear historia') && !lower.includes('sprint') && !lower.includes('bug')) {
+    let replyText = '';
+    const nowLocal = new Date();
+    const diasSemana = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+    const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+    if (lower.includes('dia') || lower.includes('día') || lower.includes('fecha')) {
+      replyText = `Hoy es ${diasSemana[nowLocal.getDay()]}, ${nowLocal.getDate()} de ${meses[nowLocal.getMonth()]} de ${nowLocal.getFullYear()} (Hora: ${nowLocal.toLocaleTimeString()}).`;
+    } else if (lower.includes('hora')) {
+      replyText = `La hora actual del sistema es ${nowLocal.toLocaleTimeString()}.`;
+    } else {
+      const greetingReplies = {
+        10: `¡Hola! Aquí Alberto (CEO). La sala operativa está en orden. Recuerda que Nestor (PO) es el encargado de levantar requerimientos formales al tablero. ¿En qué puedo orientarte?`,
+        11: `¡Hola! Nestor (PO) a la orden. Si tienes una nueva feature o hipótesis para Buskdos, indícamela y redactaré la historia con criterios BDD para que la apruebes.`,
+        6: `¡Hola! Luigi a la orden. Backend NestJS y PostgreSQL dedicados listos.`,
+        7: `¡Buenas! Gabri aquí. App móvil y Landing web sincronizadas.`,
+        8: `Saludos. Carlo listo para revisiones de seguridad y RBAC.`,
+        9: `¡Hola! Bruno al habla. Grafo de Graphify y Obsidian sincronizados.`
+      };
+      replyText = greetingReplies[agent.id] || `¡Hola! ${agent.name} a la orden.`;
+    }
+
     const logReply = `[${now.toLocaleTimeString()}] 💬 ${replyText}`;
-    agent.logs.push(`[${now.toLocaleTimeString()}] ⚡ ${text}`);
+    agent.logs.push(`[${now.toLocaleTimeString()}] ❓ ${text}`);
     agent.logs.push(logReply);
 
     broadcast({
@@ -190,7 +204,7 @@ function dispatchRealTask(agent, rawInput) {
       type: 'agentActivity',
       id: agent.id,
       agentId: agent.id,
-      tool: 'Chat',
+      tool: 'Chat Directo',
       status: 'In attesa di istruzioni (Idle)',
       text: replyText,
       content: replyText,
@@ -202,7 +216,7 @@ function dispatchRealTask(agent, rawInput) {
       broadcast({ type: 'agentStatus', id: agent.id, agentId: agent.id, status: 'waiting' });
     }, 1200);
 
-    return;
+    return; // SALE SIN ENCOLAR TAREA EN EL TABLERO
   }
 
   const tasks = loadTaskQueue();
