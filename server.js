@@ -948,7 +948,7 @@ function sendOfficeInitProtocol(ws) {
   }
 
   // Invia l'utilizzo token iniziale reale per tutti i membri
-  for (const [sid, agentId] of Object.entries(SUBAGENT_MAP)) {
+  for (const [sid, agentId] of Object.entries(getSubagentMap())) {
     const tok = getAgentActualTokens(sid);
     ws.send(JSON.stringify({
       type: 'agentContextUsage',
@@ -1172,7 +1172,7 @@ async function getLiveQuotaAndModels() {
       broadcast({ type: 'loungeBreakState', active: tr.mode === 'rest', reason: tr.mode === 'rest' ? 'quota_rest' : 'quota_resumed' });
     }
     const subagentsList = [];
-    for (const [sid, agentId] of Object.entries(SUBAGENT_MAP)) {
+    for (const [sid, agentId] of Object.entries(getSubagentMap())) {
       const agent = TEAM.find(a => a.id === agentId);
       let modelDisplayName = agentId === 10 ? 'Gemini 3.8 Flash (Low)' : 'Gemini 3.8 Flash (Tiered)';
       if (resting) {
@@ -1639,7 +1639,9 @@ app.post('/api/log', (req, res) => {
 // Monitor log transcript da Antigravity per live streaming e animazioni
 const filePositions = new Map();
 const delegationActiveUntil = new Map();
-const SUBAGENT_MAP = routing.allSessionsMap();
+function getSubagentMap() {
+  return routing.allSessionsMap();
+}
 
 function formatToolDesc(call) {
   const args = call.args || {};
