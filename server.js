@@ -50,6 +50,36 @@ const LOCAL_ASSETS_DIR = path.join(__dirname, 'assets');
 const LAYOUT_PATH = path.join(LOCAL_ASSETS_DIR, 'layout.json');
 const WORKSPACE_DIR = path.resolve(__dirname);
 const QUEUE_FILE = path.join(WORKSPACE_DIR, 'tasks_queue.json');
+const FLOW_FILE = path.join(WORKSPACE_DIR, 'task_flow_history.json');
+
+function loadTaskFlowHistory() {
+  try {
+    if (fs.existsSync(FLOW_FILE)) {
+      return JSON.parse(fs.readFileSync(FLOW_FILE, 'utf8'));
+    }
+  } catch {}
+  return [];
+}
+
+function recordFlowEvent(event) {
+  try {
+    const list = loadTaskFlowHistory();
+    const entry = {
+      id: `flow_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+      timestamp: new Date().toISOString(),
+      ...event
+    };
+    list.push(entry);
+    const trimmed = list.slice(-100);
+    const tmp = FLOW_FILE + '.tmp';
+    fs.writeFileSync(tmp, JSON.stringify(trimmed, null, 2), 'utf8');
+    fs.renameSync(tmp, FLOW_FILE);
+    broadcast({ type: 'taskFlowUpdated', flow: trimmed });
+    return entry;
+  } catch (err) {
+    console.error('[Flow] Error al guardar flujo de tareas:', err.message);
+  }
+}
 
 // Gestione atomica della coda dei task (Prescrizioni Carlo QA)
 function loadTaskQueue() {
@@ -335,6 +365,14 @@ function dispatchRealTask(agent, rawInput) {
 
     // Se il comando viene assegnato a un membro del team diverso da Alberto (o se il prompt per Alberto nomina un collega), mostra Alberto che cammina a consegnargli il compito!
     if (agent.id !== 10) {
+      recordFlowEvent({
+        fromAgentId: 10,
+        fromName: 'Alberto (CEO)',
+        toAgentId: agent.id,
+        toName: agent.name,
+        type: 'delegation',
+        message: text
+      });
       broadcast({
         type: 'agentDelegation',
         fromAgentId: 10,
@@ -345,9 +383,17 @@ function dispatchRealTask(agent, rawInput) {
       });
     } else {
       const lower = text.toLowerCase();
-      const mentioned = lower.includes('luigi') ? 6 : (lower.includes('gabri') ? 7 : (lower.includes('carlo') ? 8 : null));
+      const mentioned = lower.includes('luigi') ? 6 : (lower.includes('gabri') ? 7 : (lower.includes('carlo') ? 8 : (lower.includes('bruno') ? 9 : (lower.includes('nestor') ? 11 : null))));
       if (mentioned) {
         const destAgent = TEAM.find(a => a.id === mentioned);
+        recordFlowEvent({
+          fromAgentId: 10,
+          fromName: 'Alberto (CEO)',
+          toAgentId: mentioned,
+          toName: destAgent ? destAgent.name : `Agente ${mentioned}`,
+          type: 'delegation',
+          message: text
+        });
         broadcast({
           type: 'agentDelegation',
           fromAgentId: 10,
@@ -1532,6 +1578,10 @@ app.get('/api/team', (req, res) => {
   res.json({ team: TEAM });
 });
 
+app.get('/api/tasks/flow', (req, res) => {
+  res.json({ flow: loadTaskFlowHistory() });
+});
+
 app.get('/api/project', (req, res) => {
   const cur = routing.getTargetProject();
   res.json({ projectPath: cur, projectName: path.basename(cur), projects: routing.getProjectsList() });
@@ -1868,6 +1918,14 @@ function monitorLiveAntigravity() {
                       if (Date.now() - lastDTime > 30000) {
                         recentDelegations.set(dKey, Date.now());
                         delegationActiveUntil.set(agentId, Date.now() + 8000);
+                        recordFlowEvent({
+                          fromAgentId: agentId,
+                          fromName: targetAgent.name,
+                          toAgentId: toAgentId,
+                          toName: destAgent ? destAgent.name : `Agente ${toAgentId}`,
+                          type: 'delegation',
+                          message: rawMsg
+                        });
                         broadcast({
                           type: 'agentDelegation',
                           fromAgentId: agentId,

@@ -786,8 +786,8 @@
     ">
       <div style="
         width: 100%;
-        max-width: 1080px;
-        max-height: 84vh;
+        max-width: 1280px;
+        max-height: 88vh;
         background: #0d1117;
         border: 1px solid #30363d;
         border-radius: 12px;
@@ -796,41 +796,33 @@
         flex-direction: column;
         overflow: hidden;
       ">
-        <div style="padding: 14px 20px; background: #161b22; border-bottom: 1px solid #30363d; display: flex; align-items: center; justify-content: space-between;">
+        <div style="padding: 14px 20px; background: #161b22; border-bottom: 1px solid #30363d; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
           <div style="display: flex; align-items: center; gap: 10px;">
             <span style="font-size: 1.25rem;">📋</span>
-            <h2 id="kanban-modal-title" style="font-size: 1.05rem; color: #f0f6fc; margin: 0;">Lavagna Kanban Operativa — AziendaAI</h2>
+            <h2 id="kanban-modal-title" style="font-size: 1.05rem; color: #f0f6fc; margin: 0;">Tablero de Tareas y Flujos de Agentes</h2>
+            <div style="display: flex; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 2px;">
+              <button id="view-mode-agents-btn" onclick="setKanbanViewMode('by-agent')" style="background:#238636; color:#fff; border:none; border-radius:4px; padding:4px 10px; font-size:0.75rem; font-weight:600; cursor:pointer;">👥 Por Agente</button>
+              <button id="view-mode-flow-btn" onclick="setKanbanViewMode('flow-diagram')" style="background:transparent; color:#8b949e; border:none; border-radius:4px; padding:4px 10px; font-size:0.75rem; font-weight:600; cursor:pointer;">📊 Diagrama de Flujo</button>
+            </div>
           </div>
           <div style="display: flex; align-items: center; gap: 8px;">
             <button id="kanban-clear-btn" onclick="clearAllKanbanTasks()" style="background:#21262d; color:#e6edf3; border:1px solid #30363d; border-radius:6px; padding:5px 10px; font-size:0.75rem; cursor:pointer;">🧹 Vaciar Todas</button>
             <button onclick="closeKanbanModal()" style="background:#da3633; color:#fff; border:none; border-radius:6px; padding:5px 11px; font-size:0.78rem; font-weight:700; cursor:pointer;">✕</button>
           </div>
         </div>
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 16px; overflow-y: auto; flex: 1;">
-          <!-- Colonna 1: In Coda -->
-          <div style="background: #161b22; border: 1px solid #30363d; border-radius: 8px; display: flex; flex-direction: column; min-height: 320px; max-height: 64vh;">
-            <div style="padding: 10px 14px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center;">
-              <strong id="kanban-col-queued-title" style="font-size: 0.84rem; color: #d29922;">⏳ In Coda / Riposo</strong>
-              <span id="kanban-col-queued-count" style="background: #21262d; color: #d29922; border-radius: 99px; padding: 1px 8px; font-size: 0.72rem; font-weight: 700;">0</span>
-            </div>
-            <div id="kanban-col-queued" style="padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; flex: 1;"></div>
+
+        <!-- VISTA 1: TABLERO POR COLUMNAS DE AGENTE -->
+        <div id="kanban-view-by-agent" style="display: flex; gap: 12px; padding: 16px; overflow-x: auto; overflow-y: hidden; flex: 1; align-items: stretch;">
+          <!-- Las columnas dinámicas por cada agente se renderizan aquí -->
+        </div>
+
+        <!-- VISTA 2: DIAGRAMA VISUAL DE FLUJO DE ASIGNACIÓN Y DELEGACIÓN -->
+        <div id="kanban-view-flow" style="display: none; flex-direction: column; padding: 16px; overflow-y: auto; flex: 1; gap: 14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; background:#161b22; border:1px solid #30363d; border-radius:8px; padding:10px 14px;">
+            <span style="font-size:0.84rem; color:#8b949e;">Visualización secuencial de delegaciones entre agentes y orden cronológico de ejecución.</span>
+            <span id="flow-count-badge" style="background:#1f6feb; color:#fff; border-radius:99px; padding:2px 8px; font-size:0.72rem; font-weight:700;">0 eventos</span>
           </div>
-          <!-- Colonna 2: In Corso -->
-          <div style="background: #161b22; border: 1px solid #30363d; border-radius: 8px; display: flex; flex-direction: column; min-height: 320px; max-height: 64vh;">
-            <div style="padding: 10px 14px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center;">
-              <strong id="kanban-col-active-title" style="font-size: 0.84rem; color: #58a6ff;">⚡ In Corso / Assegnati</strong>
-              <span id="kanban-col-active-count" style="background: #21262d; color: #58a6ff; border-radius: 99px; padding: 1px 8px; font-size: 0.72rem; font-weight: 700;">0</span>
-            </div>
-            <div id="kanban-col-active" style="padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; flex: 1;"></div>
-          </div>
-          <!-- Colonna 3: Completati -->
-          <div style="background: #161b22; border: 1px solid #30363d; border-radius: 8px; display: flex; flex-direction: column; min-height: 320px; max-height: 64vh;">
-            <div style="padding: 10px 14px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center;">
-              <strong id="kanban-col-done-title" style="font-size: 0.84rem; color: #3fb950;">✅ Completati</strong>
-              <span id="kanban-col-done-count" style="background: #21262d; color: #3fb950; border-radius: 99px; padding: 1px 8px; font-size: 0.72rem; font-weight: 700;">0</span>
-            </div>
-            <div id="kanban-col-done" style="padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; flex: 1;"></div>
-          </div>
+          <div id="flow-diagram-container" style="display:flex; flex-direction:column; gap:10px;"></div>
         </div>
       </div>
     </div>
@@ -1657,6 +1649,18 @@
               msg.toName || 'Luigi (Backend)',
               msg.message || 'Nuovo task operativo assegnato.'
             );
+            if (typeof fetchFlowHistory === 'function') {
+              fetchFlowHistory();
+            }
+          }
+
+          if (msg.type === 'taskFlowUpdated') {
+            if (Array.isArray(msg.flow)) {
+              kanbanFlowEvents = msg.flow;
+              if (kanbanViewMode === 'flow-diagram') {
+                renderFlowDiagram();
+              }
+            }
           }
 
           // Pausa Caffè / Divano in Sala Relax (Automatica su Rest / Inattività o Manuale)
@@ -2316,6 +2320,30 @@
       // INNOVAZIONE #3: LAVAGNA KANBAN LIVE (3 COLONNE SINCRONIZZATE)
       // =========================================================================
       let kanbanTasks = [];
+      let kanbanFlowEvents = [];
+      let kanbanViewMode = 'by-agent'; // 'by-agent' | 'flow-diagram'
+
+      window.setKanbanViewMode = function(mode) {
+        kanbanViewMode = mode;
+        const btnAgents = document.getElementById('view-mode-agents-btn');
+        const btnFlow = document.getElementById('view-mode-flow-btn');
+        const viewAgents = document.getElementById('kanban-view-by-agent');
+        const viewFlow = document.getElementById('kanban-view-flow');
+
+        if (mode === 'by-agent') {
+          if (btnAgents) { btnAgents.style.background = '#238636'; btnAgents.style.color = '#fff'; }
+          if (btnFlow) { btnFlow.style.background = 'transparent'; btnFlow.style.color = '#8b949e'; }
+          if (viewAgents) viewAgents.style.display = 'flex';
+          if (viewFlow) viewFlow.style.display = 'none';
+          renderKanbanBoard();
+        } else {
+          if (btnAgents) { btnAgents.style.background = 'transparent'; btnAgents.style.color = '#8b949e'; }
+          if (btnFlow) { btnFlow.style.background = '#1f6feb'; btnFlow.style.color = '#fff'; }
+          if (viewAgents) viewAgents.style.display = 'none';
+          if (viewFlow) viewFlow.style.display = 'flex';
+          fetchFlowHistory();
+        }
+      };
 
       async function fetchKanbanTasks() {
         try {
@@ -2328,40 +2356,127 @@
         } catch {}
       }
 
+      async function fetchFlowHistory() {
+        try {
+          const res = await fetch('/api/tasks/flow');
+          const data = await res.json();
+          if (Array.isArray(data.flow)) {
+            kanbanFlowEvents = data.flow;
+            renderFlowDiagram();
+          }
+        } catch {}
+      }
+
       function renderKanbanCard(task) {
         const agent = TEAM.find(a => Number(a.id) === Number(task.agentId)) || { name: task.agentName || 'Alberto (CEO)', avatar: '👔' };
         const ts = task.timestamp ? new Date(task.timestamp).toLocaleTimeString() : '';
-        const statusColor = task.status === 'completed' ? '#3fb950' : (task.status === 'failed' ? '#da3633' : (task.status === 'queued_rest' ? '#d29922' : '#58a6ff'));
-        const outPreview = task.output ? String(task.output).slice(0, 140) : '';
+        const isRunning = task.status === 'running' || task.status === 'dispatched';
+        const isDone = task.status === 'completed';
+        const isFail = task.status === 'failed';
+        const statusColor = isDone ? '#3fb950' : (isFail ? '#da3633' : (task.status === 'queued_rest' ? '#d29922' : '#58a6ff'));
+        const statusLabel = isRunning ? '⚡ PROCESANDO' : (isDone ? '✔ COMPLETADO' : (isFail ? '✖ ERROR' : '⏳ EN COLA'));
+        const outPreview = task.output ? String(task.output).slice(0, 180) : '';
+
         return `
-          <div style="background:#0d1117; border:1px solid #30363d; border-left:3px solid ${statusColor}; border-radius:6px; padding:9px 11px; display:flex; flex-direction:column; gap:5px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.72rem; color:#8b949e;">
-              <strong style="color:#f0f6fc;">${agent.avatar || '🤖'} ${escapeHtml(agent.name)}</strong>
+          <div style="background:#0d1117; border:1px solid #30363d; border-left:3px solid ${statusColor}; border-radius:6px; padding:9px 11px; display:flex; flex-direction:column; gap:6px; transition:border-color 0.2s;">
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.69rem; color:#8b949e;">
+              <span style="background:${statusColor}22; color:${statusColor}; font-weight:700; padding:2px 6px; border-radius:4px; font-size:0.65rem;">${statusLabel}</span>
               <span>${escapeHtml(ts)}</span>
             </div>
-            <div style="font-size:0.8rem; color:#e6edf3; font-weight:600; word-break:break-word;">${escapeHtml(task.prompt || task.command || '')}</div>
-            ${outPreview ? `<div style="font-size:0.71rem; color:#8b949e; background:#161b22; padding:5px 7px; border-radius:4px; font-family:Consolas,monospace; white-space:pre-wrap; word-break:break-word;">${escapeHtml(outPreview)}</div>` : ''}
+            <div style="font-size:0.8rem; color:#e6edf3; font-weight:600; word-break:break-word; line-height:1.4;">${escapeHtml(task.prompt || task.command || '')}</div>
+            ${outPreview ? `<div style="font-size:0.71rem; color:#8b949e; background:#161b22; padding:5px 7px; border-radius:4px; font-family:Consolas,monospace; white-space:pre-wrap; word-break:break-word; max-height:85px; overflow-y:auto;">${escapeHtml(outPreview)}</div>` : ''}
           </div>
         `;
       }
 
       function renderKanbanBoard() {
-        const t = I18N[appLang] || I18N.es;
-        const queued = kanbanTasks.filter(x => x.status === 'queued_rest' || x.status === 'queued' || x.status === 'pending');
-        const active = kanbanTasks.filter(x => x.status === 'running' || x.status === 'dispatched');
-        const done   = kanbanTasks.filter(x => x.status === 'completed' || x.status === 'failed').slice().reverse();
+        const container = document.getElementById('kanban-view-by-agent');
+        if (!container) return;
 
+        // Total badge
         const badge = document.getElementById('kanban-count-badge');
-        if (badge) badge.textContent = String(queued.length + active.length);
+        const activeCount = kanbanTasks.filter(x => x.status === 'running' || x.status === 'dispatched').length;
+        if (badge) badge.textContent = String(kanbanTasks.length);
 
-        const c1Count = document.getElementById('kanban-col-queued-count'); if (c1Count) c1Count.textContent = String(queued.length);
-        const c2Count = document.getElementById('kanban-col-active-count'); if (c2Count) c2Count.textContent = String(active.length);
-        const c3Count = document.getElementById('kanban-col-done-count');   if (c3Count) c3Count.textContent = String(done.length);
+        if (!TEAM || TEAM.length === 0) {
+          container.innerHTML = `<div style="color:#8b949e; padding:30px; text-align:center; width:100%;">Cargando equipo de agentes...</div>`;
+          return;
+        }
 
-        const emptyHtml = `<div style="color:#484f58; font-size:0.76rem; text-align:center; padding:24px 8px; font-style:italic;">${t.kanbanEmpty}</div>`;
-        const col1 = document.getElementById('kanban-col-queued'); if (col1) col1.innerHTML = queued.length ? queued.map(renderKanbanCard).join('') : emptyHtml;
-        const col2 = document.getElementById('kanban-col-active'); if (col2) col2.innerHTML = active.length ? active.map(renderKanbanCard).join('') : emptyHtml;
-        const col3 = document.getElementById('kanban-col-done');   if (col3) col3.innerHTML = done.length   ? done.map(renderKanbanCard).join('')   : emptyHtml;
+        container.innerHTML = TEAM.map(agent => {
+          const aId = Number(agent.id);
+          const agentTasks = kanbanTasks.filter(t => Number(t.agentId) === aId);
+          const inProgress = agentTasks.filter(t => t.status === 'running' || t.status === 'dispatched');
+          const history = agentTasks.slice().reverse();
+          const isBusy = inProgress.length > 0;
+
+          return `
+            <div style="background:#161b22; border:1px solid ${isBusy ? '#388bfd' : '#30363d'}; border-radius:8px; display:flex; flex-direction:column; min-width:260px; max-width:280px; flex:1; max-height:68vh; box-shadow:${isBusy ? '0 0 12px rgba(56,139,253,0.2)' : 'none'};">
+              <div style="padding:10px 14px; border-bottom:1px solid #30363d; display:flex; justify-content:space-between; align-items:center; background:#1c2128;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="font-size:1.15rem;">${agent.avatar || '🤖'}</span>
+                  <div>
+                    <strong style="font-size:0.83rem; color:#f0f6fc; display:block;">${escapeHtml(agent.name)}</strong>
+                    <span style="font-size:0.67rem; color:${isBusy ? '#58a6ff' : '#8b949e'}; font-weight:${isBusy ? '700' : 'normal'};">${isBusy ? '⚡ Procesando tarea' : '💤 En espera (Idle)'}</span>
+                  </div>
+                </div>
+                <span style="background:${isBusy ? '#1f6feb' : '#21262d'}; color:${isBusy ? '#fff' : '#8b949e'}; border-radius:99px; padding:2px 8px; font-size:0.7rem; font-weight:700;">${agentTasks.length}</span>
+              </div>
+              <div style="padding:10px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; flex:1;">
+                ${history.length ? history.map(renderKanbanCard).join('') : `<div style="color:#484f58; font-size:0.75rem; text-align:center; padding:30px 10px; font-style:italic;">Sin tareas registradas para este agente</div>`}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function renderFlowDiagram() {
+        const container = document.getElementById('flow-diagram-container');
+        const badge = document.getElementById('flow-count-badge');
+        if (!container) return;
+
+        if (badge) badge.textContent = `${kanbanFlowEvents.length} delegaciones / tareas`;
+
+        if (!kanbanFlowEvents || kanbanFlowEvents.length === 0) {
+          container.innerHTML = `
+            <div style="background:#161b22; border:1px solid #30363d; border-radius:8px; padding:32px 16px; text-align:center; color:#8b949e; font-style:italic;">
+              No hay flujo de delegaciones registrado aún. Las delegaciones entre agentes (ej: Alberto delegando a Luigi o Gabri) y directivas se visualizarán aquí automáticamente como un diagrama secuencial paso a paso.
+            </div>
+          `;
+          return;
+        }
+
+        const events = kanbanFlowEvents.slice().reverse();
+        container.innerHTML = events.map((ev, index) => {
+          const fromAgent = TEAM.find(a => Number(a.id) === Number(ev.fromAgentId)) || { name: ev.fromName || 'Alberto (CEO)', avatar: '👔' };
+          const toAgent = TEAM.find(a => Number(a.id) === Number(ev.toAgentId)) || { name: ev.toName || 'Especialista', avatar: '🤖' };
+          const ts = ev.timestamp ? new Date(ev.timestamp).toLocaleTimeString() : '';
+
+          return `
+            <div style="background:#161b22; border:1px solid #30363d; border-radius:8px; padding:12px 16px; display:flex; flex-direction:column; gap:8px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; color:#8b949e;">
+                <span style="color:#58a6ff; font-weight:700;">PASO #${events.length - index} · FLUJO DE TRABAJO</span>
+                <span>${escapeHtml(ts)}</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:6px 0;">
+                <div style="background:#0d1117; border:1px solid #30363d; border-radius:6px; padding:6px 12px; display:flex; align-items:center; gap:6px;">
+                  <span>${fromAgent.avatar || '👔'}</span>
+                  <strong style="color:#f0f6fc; font-size:0.82rem;">${escapeHtml(fromAgent.name)}</strong>
+                </div>
+                <div style="display:flex; align-items:center; gap:4px; color:#58a6ff; font-weight:700; font-size:0.8rem;">
+                  <span>───▶ Asigna / Delega ───▶</span>
+                </div>
+                <div style="background:#0d1117; border:1px solid #388bfd; border-radius:6px; padding:6px 12px; display:flex; align-items:center; gap:6px;">
+                  <span>${toAgent.avatar || '⚙️'}</span>
+                  <strong style="color:#58a6ff; font-size:0.82rem;">${escapeHtml(toAgent.name)}</strong>
+                </div>
+              </div>
+              <div style="background:#0d1117; border-left:3px solid #1f6feb; border-radius:4px; padding:8px 12px; font-size:0.8rem; color:#e6edf3; font-family:Consolas,monospace; word-break:break-word;">
+                "${escapeHtml(ev.message || ev.prompt || '')}"
+              </div>
+            </div>
+          `;
+        }).join('');
       }
 
       window.openKanbanModal = function() {
