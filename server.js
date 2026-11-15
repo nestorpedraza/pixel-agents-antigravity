@@ -1621,6 +1621,97 @@ app.post('/api/tasks/clear', (req, res) => {
   res.json({ success: true, queue: current });
 });
 
+// Eliminar una sola tarea específica por ID
+app.delete('/api/tasks/:id', (req, res) => {
+  const taskId = req.params.id;
+  let current = loadTaskQueue();
+  current = current.filter(t => t.id !== taskId);
+  saveTaskQueue(current);
+  res.json({ success: true, queue: current });
+});
+
+// Aprobar una tarea pendiente creada por el PO
+app.post('/api/tasks/:id/approve', (req, res) => {
+  const taskId = req.params.id;
+  let current = loadTaskQueue();
+  const task = current.find(t => t.id === taskId);
+  if (!task) return res.status(404).json({ error: 'Tarea no encontrada' });
+
+  task.status = 'dispatched';
+  task.approvedAt = new Date().toISOString();
+  task.approvedBy = 'Supreme Entity';
+  saveTaskQueue(current);
+
+  // Notificar al equipo y registrar en el flujo
+  recordFlowEvent({
+    fromAgentId: 0,
+    fromName: 'Entidad Suprema (Usuario)',
+    toAgentId: task.agentId || 10,
+    toName: task.agentName || 'Alberto (CEO)',
+    type: 'approval',
+    message: `Tarea "${task.title || task.prompt}" APROBADA para ejecución.`
+  });
+
+  broadcast({
+    type: 'taskApproved',
+    taskId: taskId,
+    task: task
+  });
+
+  res.json({ success: true, task: task, queue: current });
+});
+
+// Crear nueva tarea formal desde el PO (Nestor)
+app.post('/api/tasks/create', (req, res) => {
+  const { title, prompt, specDetails, bddCriteria, targetAgentId, targetAgentName } = req.body || {};
+  if (!title && !prompt) return res.status(400).json({ error: 'Título o requerimiento obligatorio' });
+
+  const tasks = loadTaskQueue();
+  const newTaskId = `task_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+  const now = new Date();
+
+  const taskEntry = {
+    id: newTaskId,
+    timestamp: now.toISOString(),
+    agentId: Number(targetAgentId || 11), // Por defecto Nestor PO
+    agentName: targetAgentName || 'Nestor (Product Owner)',
+    createdBy: 'Nestor (Product Owner)',
+    category: 'sdd_spec',
+    status: 'pending_approval', // Requiere aprobación obligatoria del usuario
+    title: title || (prompt ? prompt.slice(0, 60) : 'Nueva Historia SDD'),
+    prompt: prompt || title,
+    spec: {
+      objective: title || prompt,
+      bddCriteria: bddCriteria || 'Dado que el requerimiento fue definido por el PO...\nCuando el usuario lo apruebe...\nEntonces pasará a desarrollo.',
+      technicalDetails: specDetails || 'Levantamiento de especificación SDD generado por Nestor (Product Owner).',
+      history: [
+        {
+          timestamp: now.toISOString(),
+          author: 'Nestor (Product Owner)',
+          action: 'Creación de Requerimiento',
+          note: 'Historia de usuario y especificación redactada. En espera de aprobación por la Entidad Suprema.'
+        }
+      ]
+    },
+    exitCode: null,
+    output: 'En espera de aprobación por la Entidad Suprema (Usuario)'
+  };
+
+  tasks.push(taskEntry);
+  saveTaskQueue(tasks);
+
+  recordFlowEvent({
+    fromAgentId: 11,
+    fromName: 'Nestor (Product Owner)',
+    toAgentId: 0,
+    toName: 'Entidad Suprema (Usuario)',
+    type: 'requirement_created',
+    message: `Nueva historia montada: "${taskEntry.title}". Esperando aprobación.`
+  });
+
+  res.json({ success: true, task: taskEntry, queue: tasks });
+});
+
 app.post('/api/ceo-report', (req, res) => {
   const projPath = routing.getTargetProject() || WORKSPACE_DIR;
   const bin = process.platform === 'win32' ? 'git.exe' : 'git';

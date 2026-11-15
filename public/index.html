@@ -828,6 +828,90 @@
       </div>
     </div>
 
+    <!-- MODAL DETALLE DE TAREA / HISTORIA ESTILO JIRA -->
+    <div id="task-detail-modal-overlay" onclick="if(event.target===this) closeTaskDetailModal()" style="
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 10002;
+      background: rgba(1, 4, 9, 0.85);
+      backdrop-filter: blur(5px);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    ">
+      <div style="
+        width: 100%;
+        max-width: 860px;
+        max-height: 85vh;
+        background: #0d1117;
+        border: 1px solid #30363d;
+        border-radius: 12px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      ">
+        <div style="padding: 14px 20px; background: #161b22; border-bottom: 1px solid #30363d; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.25rem;">📌</span>
+            <span id="jira-task-key" style="background:#1f6feb22; color:#58a6ff; font-weight:700; font-size:0.78rem; padding:3px 8px; border-radius:4px;">US-000</span>
+            <h3 id="jira-task-title" style="font-size: 1rem; color: #f0f6fc; margin: 0; font-weight:600;">Detalle del Requerimiento</h3>
+          </div>
+          <button onclick="closeTaskDetailModal()" style="background:#da3633; color:#fff; border:none; border-radius:6px; padding:5px 11px; font-size:0.78rem; font-weight:700; cursor:pointer;">✕</button>
+        </div>
+
+        <div style="padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; flex: 1;">
+          <!-- Metadatos superiores: Estado, Responsable, Creado por -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 12px 16px;">
+            <div>
+              <span style="font-size: 0.72rem; color: #8b949e; display:block;">ESTADO ACTUAL</span>
+              <span id="jira-task-status" style="font-size: 0.85rem; font-weight: 700; color: #58a6ff;">En Revisión</span>
+            </div>
+            <div>
+              <span style="font-size: 0.72rem; color: #8b949e; display:block;">CREADO POR</span>
+              <span id="jira-task-author" style="font-size: 0.85rem; font-weight: 600; color: #f0f6fc;">🎯 Nestor (PO)</span>
+            </div>
+            <div>
+              <span style="font-size: 0.72rem; color: #8b949e; display:block;">ASIGNADO A</span>
+              <span id="jira-task-assignee" style="font-size: 0.85rem; font-weight: 600; color: #f0f6fc;">👔 Alberto (CEO)</span>
+            </div>
+            <div>
+              <span style="font-size: 0.72rem; color: #8b949e; display:block;">FECHA Y HORA</span>
+              <span id="jira-task-date" style="font-size: 0.85rem; font-weight: 600; color: #8b949e;">--</span>
+            </div>
+          </div>
+
+          <!-- Acciones de Aprobación para la Entidad Suprema -->
+          <div id="jira-approval-banner" style="display:none; background:#d2992222; border:1px solid #d29922; border-radius:8px; padding:12px 16px; align-items:center; justify-content:space-between; gap:12px;">
+            <div>
+              <strong style="color:#d29922; font-size:0.85rem; display:block;">⏳ Tarea Pendiente de Aprobación</strong>
+              <span style="color:#8b949e; font-size:0.75rem;">Esta historia fue montada por Nestor (PO). Como Entidad Suprema, debes autorizar su paso al equipo técnico.</span>
+            </div>
+            <button id="jira-approve-btn" style="background:#238636; color:#fff; border:none; border-radius:6px; padding:7px 16px; font-size:0.8rem; font-weight:700; cursor:pointer;">✅ Aprobar Tarea</button>
+          </div>
+
+          <!-- Descripción y Levantamiento del Requerimiento -->
+          <div>
+            <h4 style="font-size: 0.85rem; color: #8b949e; text-transform: uppercase; margin: 0 0 8px 0; letter-spacing: 0.5px;">📝 Levantamiento del Requerimiento (Spec)</h4>
+            <div id="jira-task-desc" style="background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 14px; font-size: 0.85rem; color: #e6edf3; line-height: 1.6; white-space: pre-wrap; font-family: Consolas, monospace;"></div>
+          </div>
+
+          <!-- Criterios de Aceptación BDD -->
+          <div>
+            <h4 style="font-size: 0.85rem; color: #8b949e; text-transform: uppercase; margin: 0 0 8px 0; letter-spacing: 0.5px;">✅ Criterios de Aceptación (BDD)</h4>
+            <div id="jira-task-bdd" style="background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 14px; font-size: 0.83rem; color: #3fb950; line-height: 1.6; white-space: pre-wrap; font-family: Consolas, monospace;"></div>
+          </div>
+
+          <!-- Historial de Auditoría estilo Jira -->
+          <div>
+            <h4 style="font-size: 0.85rem; color: #8b949e; text-transform: uppercase; margin: 0 0 8px 0; letter-spacing: 0.5px;">📜 Histórico de Actividad y Cambios</h4>
+            <div id="jira-task-history" style="display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- INNOVAZIONE #4: MODALE SELETTORE PROGETTO TARGET (MULTI-WORKSPACE) -->
     <div id="project-modal-overlay" onclick="if(event.target===this) closeProjectModal()" style="
       display: none;
@@ -2371,21 +2455,31 @@
       function renderKanbanCard(task) {
         const agent = TEAM.find(a => Number(a.id) === Number(task.agentId)) || { name: task.agentName || 'Alberto (CEO)', avatar: '👔' };
         const ts = task.timestamp ? new Date(task.timestamp).toLocaleTimeString() : '';
+        const isPending = task.status === 'pending_approval';
         const isRunning = task.status === 'running' || task.status === 'dispatched';
         const isDone = task.status === 'completed';
         const isFail = task.status === 'failed';
-        const statusColor = isDone ? '#3fb950' : (isFail ? '#da3633' : (task.status === 'queued_rest' ? '#d29922' : '#58a6ff'));
-        const statusLabel = isRunning ? '⚡ PROCESANDO' : (isDone ? '✔ COMPLETADO' : (isFail ? '✖ ERROR' : '⏳ EN COLA'));
-        const outPreview = task.output ? String(task.output).slice(0, 180) : '';
+
+        const statusColor = isPending ? '#d29922' : (isDone ? '#3fb950' : (isFail ? '#da3633' : (task.status === 'queued_rest' ? '#d29922' : '#58a6ff')));
+        const statusLabel = isPending ? '⏳ POR APROBAR' : (isRunning ? '⚡ PROCESANDO' : (isDone ? '✔ COMPLETADO' : (isFail ? '✖ ERROR' : '⏳ EN COLA')));
+        const outPreview = task.output ? String(task.output).slice(0, 140) : '';
 
         return `
-          <div style="background:#0d1117; border:1px solid #30363d; border-left:3px solid ${statusColor}; border-radius:6px; padding:9px 11px; display:flex; flex-direction:column; gap:6px; transition:border-color 0.2s;">
+          <div style="background:#0d1117; border:1px solid #30363d; border-left:3px solid ${statusColor}; border-radius:6px; padding:9px 11px; display:flex; flex-direction:column; gap:6px; transition:border-color 0.2s; position:relative;">
             <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.69rem; color:#8b949e;">
               <span style="background:${statusColor}22; color:${statusColor}; font-weight:700; padding:2px 6px; border-radius:4px; font-size:0.65rem;">${statusLabel}</span>
-              <span>${escapeHtml(ts)}</span>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <span>${escapeHtml(ts)}</span>
+                <button onclick="event.stopPropagation(); deleteSingleTask('${escapeHtml(task.id)}')" title="Eliminar esta tarea" style="background:transparent; border:none; color:#8b949e; cursor:pointer; font-size:0.8rem; padding:0 2px; line-height:1;" onmouseover="this.style.color='#da3633'" onmouseout="this.style.color='#8b949e'">🗑️</button>
+              </div>
             </div>
-            <div style="font-size:0.8rem; color:#e6edf3; font-weight:600; word-break:break-word; line-height:1.4;">${escapeHtml(task.prompt || task.command || '')}</div>
-            ${outPreview ? `<div style="font-size:0.71rem; color:#8b949e; background:#161b22; padding:5px 7px; border-radius:4px; font-family:Consolas,monospace; white-space:pre-wrap; word-break:break-word; max-height:85px; overflow-y:auto;">${escapeHtml(outPreview)}</div>` : ''}
+            <div style="font-size:0.8rem; color:#e6edf3; font-weight:600; word-break:break-word; line-height:1.4;">${escapeHtml(task.title || task.prompt || task.command || '')}</div>
+            ${outPreview ? `<div style="font-size:0.71rem; color:#8b949e; background:#161b22; padding:5px 7px; border-radius:4px; font-family:Consolas,monospace; white-space:pre-wrap; word-break:break-word; max-height:65px; overflow-y:auto;">${escapeHtml(outPreview)}</div>` : ''}
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px; padding-top:4px; border-top:1px solid #21262d;">
+              <button onclick="openTaskDetailModal('${escapeHtml(task.id)}')" style="background:#21262d; color:#58a6ff; border:1px solid #30363d; border-radius:4px; padding:3px 8px; font-size:0.68rem; font-weight:600; cursor:pointer;" onmouseover="this.style.background='#30363d'" onmouseout="this.style.background='#21262d'">🔍 Ver Detalle</button>
+              ${isPending ? `<button onclick="approveSingleTask('${escapeHtml(task.id)}')" style="background:#238636; color:#fff; border:none; border-radius:4px; padding:3px 8px; font-size:0.68rem; font-weight:700; cursor:pointer;">✅ Aprobar</button>` : ''}
+            </div>
           </div>
         `;
       }
@@ -2576,6 +2670,124 @@
       window.closeKanbanModal = function() {
         const el = document.getElementById('kanban-modal-overlay');
         if (el) el.style.display = 'none';
+      };
+
+      window.deleteSingleTask = async function(taskId) {
+        if (!confirm('¿Deseas eliminar esta tarea del tablero?')) return;
+        try {
+          const res = await fetch(`/api/tasks/${taskId}`, { method: 'DELETE' });
+          const data = await res.json();
+          if (Array.isArray(data.queue)) {
+            kanbanTasks = data.queue;
+            renderKanbanBoard();
+          }
+        } catch {}
+      };
+
+      window.approveSingleTask = async function(taskId) {
+        try {
+          const res = await fetch(`/api/tasks/${taskId}/approve`, { method: 'POST' });
+          const data = await res.json();
+          if (Array.isArray(data.queue)) {
+            kanbanTasks = data.queue;
+            renderKanbanBoard();
+          }
+          closeTaskDetailModal();
+        } catch {}
+      };
+
+      window.openTaskDetailModal = function(taskId) {
+        const task = kanbanTasks.find(t => t.id === taskId);
+        if (!task) return;
+
+        const overlay = document.getElementById('task-detail-modal-overlay');
+        const keyEl = document.getElementById('jira-task-key');
+        const titleEl = document.getElementById('jira-task-title');
+        const statusEl = document.getElementById('jira-task-status');
+        const authorEl = document.getElementById('jira-task-author');
+        const assigneeEl = document.getElementById('jira-task-assignee');
+        const dateEl = document.getElementById('jira-task-date');
+        const descEl = document.getElementById('jira-task-desc');
+        const bddEl = document.getElementById('jira-task-bdd');
+        const histEl = document.getElementById('jira-task-history');
+        const bannerEl = document.getElementById('jira-approval-banner');
+        const approveBtn = document.getElementById('jira-approve-btn');
+
+        if (keyEl) keyEl.textContent = task.id.replace('task_', 'US-').slice(0, 10);
+        if (titleEl) titleEl.textContent = task.title || task.prompt || task.command || 'Detalle de Historia';
+        
+        const isPending = task.status === 'pending_approval';
+        if (statusEl) {
+          statusEl.textContent = isPending ? '⏳ PENDIENTE DE APROBACIÓN' : (task.status === 'completed' ? '✔ COMPLETADO' : (task.status === 'running' || task.status === 'dispatched' ? '⚡ EN PROGRESO' : task.status));
+          statusEl.style.color = isPending ? '#d29922' : (task.status === 'completed' ? '#3fb950' : '#58a6ff');
+        }
+
+        if (authorEl) authorEl.textContent = task.createdBy || 'Nestor (Product Owner)';
+        if (assigneeEl) authorEl.textContent = task.agentName || 'Alberto (CEO)';
+        if (dateEl) {
+          const d = task.timestamp ? new Date(task.timestamp) : new Date();
+          dateEl.textContent = `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
+        }
+
+        if (bannerEl) {
+          bannerEl.style.display = isPending ? 'flex' : 'none';
+          if (approveBtn) {
+            approveBtn.onclick = () => approveSingleTask(task.id);
+          }
+        }
+
+        // Descripción y especificación
+        const specText = task.spec && task.spec.technicalDetails 
+          ? task.spec.technicalDetails 
+          : (task.prompt || task.command || 'Sin especificación detallada.');
+        if (descEl) descEl.textContent = specText;
+
+        // Criterios BDD
+        const bddText = task.spec && task.spec.bddCriteria 
+          ? task.spec.bddCriteria 
+          : `Dado que el requerimiento fue levantado...\nCuando el especialista ejecute la orden...\nEntonces el resultado será: ${task.output || 'Pendiente'}`;
+        if (bddEl) bddEl.textContent = bddText;
+
+        // Histórico estilo Jira
+        if (histEl) {
+          const histItems = (task.spec && Array.isArray(task.spec.history)) ? task.spec.history : [
+            {
+              timestamp: task.timestamp,
+              author: task.createdBy || 'Nestor (PO)',
+              action: 'Creación de Tarea',
+              note: task.prompt || task.command
+            }
+          ];
+
+          if (task.output) {
+            histItems.push({
+              timestamp: new Date().toISOString(),
+              author: task.agentName || 'Especialista',
+              action: 'Registro de Ejecución',
+              note: task.output
+            });
+          }
+
+          histEl.innerHTML = histItems.map(item => {
+            const dt = item.timestamp ? new Date(item.timestamp).toLocaleString() : '';
+            return `
+              <div style="background:#161b22; border:1px solid #30363d; border-radius:6px; padding:10px 14px; font-size:0.78rem;">
+                <div style="display:flex; justify-content:space-between; color:#8b949e; margin-bottom:4px;">
+                  <strong style="color:#f0f6fc;">${escapeHtml(item.author || 'Agente')} · ${escapeHtml(item.action || 'Actualización')}</strong>
+                  <span>${escapeHtml(dt)}</span>
+                </div>
+                <div style="color:#8b949e; font-family:Consolas,monospace; white-space:pre-wrap; word-break:break-word;">${escapeHtml(item.note || '')}</div>
+              </div>
+            `;
+          }).join('');
+        }
+
+        if (overlay) overlay.style.display = 'flex';
+      };
+
+      window.closeTaskDetailModal = function() {
+        const overlay = document.getElementById('task-detail-modal-overlay');
+        if (overlay) overlay.style.display = 'none';
       };
 
       window.clearAllKanbanTasks = async function() {
