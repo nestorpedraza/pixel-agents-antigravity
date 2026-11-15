@@ -2450,21 +2450,39 @@
         container.innerHTML = events.map((ev, index) => {
           const fromAgent = TEAM.find(a => Number(a.id) === Number(ev.fromAgentId)) || { name: ev.fromName || 'Alberto (CEO)', avatar: '👔' };
           const toAgent = TEAM.find(a => Number(a.id) === Number(ev.toAgentId)) || { name: ev.toName || 'Especialista', avatar: '🤖' };
-          const ts = ev.timestamp ? new Date(ev.timestamp).toLocaleTimeString() : '';
+          const dateObj = ev.timestamp ? new Date(ev.timestamp) : new Date();
+          const dateStr = dateObj.toLocaleDateString();
+          const timeStr = dateObj.toLocaleTimeString();
+
+          const roleStepLabels = {
+            '10': '👔 Directiva Estratégica CEO',
+            '11': '🎯 Definición de Requerimientos & SDD (PO)',
+            '6':  '⚙️ Implementación Core Backend & DB',
+            '7':  '🎨 Construcción Frontend / App / Landing',
+            '8':  '🛡️ Auditoría QA, Seguridad & RBAC',
+            '9':  '💎 Auditoría Modelo de Negocio & Obsidian'
+          };
+          const stepBadge = roleStepLabels[String(ev.toAgentId)] || '⚡ Asignación Operativa';
 
           return `
             <div style="background:#161b22; border:1px solid #30363d; border-radius:8px; padding:12px 16px; display:flex; flex-direction:column; gap:8px;">
-              <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; color:#8b949e;">
-                <span style="color:#58a6ff; font-weight:700;">PASO #${events.length - index} · FLUJO DE TRABAJO</span>
-                <span>${escapeHtml(ts)}</span>
+              <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; color:#8b949e; flex-wrap:wrap; gap:6px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="background:#1f6feb22; color:#58a6ff; font-weight:700; padding:2px 8px; border-radius:4px; font-size:0.72rem;">PASO #${events.length - index}</span>
+                  <span style="color:#d29922; font-weight:600; font-size:0.75rem;">${stepBadge}</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px; color:#8b949e; font-size:0.73rem;">
+                  <span>📅 <strong>${escapeHtml(dateStr)}</strong></span>
+                  <span>⏰ <strong>${escapeHtml(timeStr)}</strong></span>
+                </div>
               </div>
               <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:6px 0;">
                 <div style="background:#0d1117; border:1px solid #30363d; border-radius:6px; padding:6px 12px; display:flex; align-items:center; gap:6px;">
                   <span>${fromAgent.avatar || '👔'}</span>
                   <strong style="color:#f0f6fc; font-size:0.82rem;">${escapeHtml(fromAgent.name)}</strong>
                 </div>
-                <div style="display:flex; align-items:center; gap:4px; color:#58a6ff; font-weight:700; font-size:0.8rem;">
-                  <span>───▶ Asigna / Delega ───▶</span>
+                <div style="display:flex; align-items:center; gap:4px; color:#388bfd; font-weight:700; font-size:0.8rem;">
+                  <span>────────▶ [Pasa Tarea / Requerimiento] ────────▶</span>
                 </div>
                 <div style="background:#0d1117; border:1px solid #388bfd; border-radius:6px; padding:6px 12px; display:flex; align-items:center; gap:6px;">
                   <span>${toAgent.avatar || '⚙️'}</span>

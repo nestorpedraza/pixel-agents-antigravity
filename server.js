@@ -1866,6 +1866,14 @@ function monitorLiveAntigravity() {
                     if (Date.now() - lastDTime > 30000) {
                       recentDelegations.set(dKey, Date.now());
                       delegationActiveUntil.set(fromAgentId, Date.now() + 8000);
+                      recordFlowEvent({
+                        fromAgentId: fromAgentId,
+                        fromName: fromAgent ? fromAgent.name : `Agente ${fromAgentId}`,
+                        toAgentId: agentId,
+                        toName: targetAgent.name,
+                        type: 'message_received',
+                        message: rawMsg
+                      });
                       broadcast({
                         type: 'agentDelegation',
                         fromAgentId: fromAgentId,
