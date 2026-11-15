@@ -1,0 +1,2776 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>AziendaAI Office — Sala Operativa Ufficiale</title>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#161b22" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="AziendaAI" />
+    <link rel="apple-touch-icon" href="./icons/icon-256.png" />
+    <link rel="icon" type="image/png" href="./icons/icon-256.png?v=2" />
+    <link rel="stylesheet" crossorigin href="./assets/index-B4KUBY28.css" />
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        background-color: #0b0e14;
+        color: #e6edf3;
+        font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
+      }
+      /* HEADER TOP BAR AZIENDALE */
+      header {
+        background: #161b22;
+        border-bottom: 2px solid #30363d;
+        padding: 8px 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 1000;
+        height: 52px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .brand h1 {
+        font-size: 1.1rem;
+        letter-spacing: 0.5px;
+        color: #58a6ff;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .badge {
+        background: #238636;
+        color: #ffffff;
+        font-size: 0.72rem;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+      }
+      .team-bar {
+        display: flex;
+        gap: 8px;
+      }
+      .agent-pill {
+        background: #21262d;
+        border: 1px solid #30363d;
+        padding: 4px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.82rem;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        user-select: none;
+      }
+      .agent-pill:hover, .agent-pill.active {
+        background: #388bfd26;
+        border-color: #58a6ff;
+        color: #58a6ff;
+        transform: translateY(-1px);
+      }
+      .agent-pill .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #3fb950;
+        box-shadow: 0 0 6px #3fb950;
+      }
+
+      /* MAIN APP LAYOUT */
+      .app-layout {
+        display: flex;
+        flex: 1;
+        min-height: 0;
+        position: relative;
+      }
+      /* CONTENITORE STANZA PIXEL AGENTS */
+      #office-frame-container {
+        flex: 1;
+        position: relative;
+        background: #1e1e2e;
+        overflow: hidden;
+        height: 100%;
+        width: 100%;
+        display: flex;
+      }
+      #root {
+        width: 100% !important;
+        height: 100% !important;
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+      }
+      #root > div {
+        width: 100% !important;
+        height: 100% !important;
+      }
+      canvas {
+        display: block !important;
+      }
+      /* NASCONDE COMPLETAMENTE LA TENDINA TERMINALE NATIVA DI PIXEL AGENTS */
+      [data-testid="launch-drawer"],
+      .xterm,
+      .xterm-viewport,
+      .terminal-drawer,
+      div:has(> .xterm) {
+        display: none !important;
+      }
+
+      /* TOOLTIP / BADGE CON IL NOME DELL'AGENTE VISIBILE SOLO IN HOVER / SELEZIONE */
+      div[data-testid="agent-overlay"] .pixel-panel {
+        display: flex !important;
+        background: rgba(22, 27, 34, 0.95) !important;
+        border: 1px solid #58a6ff !important;
+        border-radius: 6px !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6) !important;
+        padding: 5px 12px !important;
+        pointer-events: none !important;
+      }
+
+      /* MONITOR TOKEN & CONTEXT GAUGE */
+      .token-monitor {
+        background: #0d1117;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        padding: 8px 12px;
+        margin: 0 16px 10px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .token-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.78rem;
+        color: #8b949e;
+      }
+      .token-bar-track {
+        width: 100%;
+        height: 6px;
+        background: #21262d;
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .token-bar-fill {
+        height: 100%;
+        width: 0%;
+        background: #2ea043;
+        transition: width 0.4s ease, background 0.4s ease;
+      }
+
+      /* DISCORD WEBHOOK STATUS BADGE */
+      .discord-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.74rem;
+        padding: 2px 8px;
+        border-radius: 4px;
+        background: #5865f21a;
+        color: #5865f2;
+        border: 1px solid #5865f24d;
+        cursor: pointer;
+      }
+      .discord-badge:hover {
+        background: #5865f233;
+      }
+
+      /* DRAWER / CONSOLE LATERALE AGENTE */
+      #agent-drawer {
+        width: 480px;
+        background: #161b22;
+        border-left: 2px solid #30363d;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        max-height: 100%;
+        overflow: hidden;
+        z-index: 900;
+        box-shadow: -4px 0 16px rgba(0,0,0,0.4);
+      }
+      .drawer-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid #30363d;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        background: #0d1117;
+      }
+      .drawer-title {
+        font-weight: bold;
+        font-size: 1.25rem;
+        color: #58a6ff;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .drawer-desc {
+        font-size: 0.9rem;
+        color: #8b949e;
+        margin-top: 4px;
+      }
+
+      /* BANNER LIVE STATUS SOTTO IL NOME NEL TERMINALE */
+      .drawer-live-status {
+        margin-top: 8px;
+        font-size: 0.86rem;
+        color: #58a6ff;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #161b22;
+        padding: 6px 12px;
+        border-radius: 6px;
+        border: 1px solid #30363d;
+        max-width: 360px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        transition: all 0.25s ease;
+      }
+      .drawer-live-status .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #3fb950;
+        box-shadow: 0 0 6px #3fb950;
+        flex-shrink: 0;
+      }
+      .drawer-live-status.active {
+        color: #e3b341;
+        border-color: #d29922;
+        background: rgba(210, 153, 34, 0.12);
+      }
+      .drawer-live-status.active .status-dot {
+        background: #e3b341;
+        box-shadow: 0 0 8px #e3b341;
+        animation: pulseStatus 1.5s infinite;
+      }
+      @keyframes pulseStatus {
+        0% { opacity: 0.35; transform: scale(0.9); }
+        50% { opacity: 1; transform: scale(1.15); }
+        100% { opacity: 0.35; transform: scale(0.9); }
+      }
+
+      /* BOX INTERATTIVO PERMISSION / APPROVAL */
+      .permission-card {
+        background: #1c1500;
+        border: 2px solid #d29922;
+        border-radius: 8px;
+        margin: 12px 16px;
+        padding: 14px;
+        box-shadow: 0 4px 16px rgba(210, 153, 34, 0.25);
+        animation: fadeInPerm 0.3s ease;
+      }
+      @keyframes fadeInPerm {
+        from { opacity: 0; transform: translateY(-6px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .permission-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+      .permission-badge {
+        background: #d29922;
+        color: #0b0e14;
+        font-weight: bold;
+        font-size: 0.76rem;
+        padding: 2px 8px;
+        border-radius: 4px;
+        letter-spacing: 0.5px;
+      }
+      .permission-time {
+        font-size: 0.78rem;
+        color: #8b949e;
+      }
+      .permission-body {
+        margin-bottom: 12px;
+      }
+      .permission-tool {
+        font-weight: bold;
+        color: #e3b341;
+        font-size: 0.92rem;
+        margin-bottom: 4px;
+      }
+      .permission-command {
+        background: #0d1117;
+        border: 1px solid #30363d;
+        color: #79c0ff;
+        font-family: 'Consolas', monospace;
+        font-size: 0.88rem;
+        padding: 8px 10px;
+        border-radius: 6px;
+        word-break: break-all;
+        margin-bottom: 6px;
+        max-height: 80px;
+        overflow-y: auto;
+      }
+      .permission-desc {
+        font-size: 0.82rem;
+        color: #c9d1d9;
+      }
+      .permission-actions {
+        display: flex;
+        gap: 10px;
+      }
+      .perm-btn {
+        flex: 1;
+        padding: 9px 14px;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 0.88rem;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      .perm-btn-approve {
+        background: #238636;
+        color: #ffffff;
+      }
+      .perm-btn-approve:hover {
+        background: #2ea043;
+        transform: translateY(-1px);
+      }
+      .perm-btn-reject {
+        background: #da3633;
+        color: #ffffff;
+      }
+      .perm-btn-reject:hover {
+        background: #f85149;
+        transform: translateY(-1px);
+      }
+
+      .logs-container {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        padding: 16px;
+        font-family: 'Consolas', 'Courier New', monospace;
+        font-size: 0.92rem;
+        background: #0d1117;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        scroll-behavior: smooth;
+      }
+      .log-entry {
+        line-height: 1.5;
+        color: #c9d1d9;
+        word-break: break-all;
+        padding: 8px 12px;
+        background: #161b22;
+        border-left: 4px solid #30363d;
+        border-radius: 0 6px 6px 0;
+      }
+      .log-entry.activity {
+        border-left-color: #3fb950;
+        color: #7ee787;
+        background: #2386361a;
+      }
+      .log-entry.task {
+        border-left-color: #a371f7;
+        color: #d2a8ff;
+        background: #8957e51a;
+      }
+      .log-entry.perm-warn {
+        border-left-color: #d29922;
+        color: #e3b341;
+        background: rgba(210, 153, 34, 0.15);
+      }
+      .log-entry.done {
+        border-left-color: #58a6ff;
+        color: #79c0ff;
+        background: #388bfd1a;
+      }
+      .log-entry.cmd-box {
+        border-left: 3px solid #388bfd;
+        background: #11151c;
+        padding: 8px 12px;
+        border-radius: 0 6px 6px 0;
+      }
+      .cmd-res-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 5px;
+        font-size: 0.78rem;
+        color: #79c0ff;
+        font-weight: 500;
+      }
+      .cmd-code {
+        padding: 1px 6px;
+        border-radius: 3px;
+        font-size: 0.70rem;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+      }
+      .cmd-code.success {
+        background: rgba(35, 134, 54, 0.3);
+        color: #7ee787;
+        border: 1px solid rgba(46, 160, 67, 0.4);
+      }
+      .cmd-code.err {
+        background: rgba(218, 54, 51, 0.3);
+        color: #f85149;
+        border: 1px solid rgba(248, 81, 73, 0.4);
+      }
+      .log-entry.cmd-box.ghost-mode {
+        border-left: 3px solid #bc8cff;
+        background: rgba(188, 140, 255, 0.08);
+      }
+      .cmd-code.ghost-badge {
+        background: rgba(188, 140, 255, 0.25);
+        color: #d2a8ff;
+        border: 1px solid rgba(188, 140, 255, 0.5);
+      }
+      .cmd-stdout {
+        background: #080c10;
+        border: 1px solid #21262d;
+        border-radius: 4px;
+        padding: 6px 8px;
+        color: #8b949e;
+        font-family: 'Consolas', 'Courier New', monospace;
+        font-size: 0.74rem;
+        line-height: 1.4;
+        white-space: pre-wrap;
+        max-height: 140px;
+        overflow-y: auto;
+        margin: 0;
+      }
+
+      /* COMANDI RAPIDI & TASK INPUT */
+      .quick-actions {
+        padding: 10px 14px;
+        background: #12161c;
+        border-top: 1px solid #30363d;
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        flex-shrink: 0;
+      }
+      .quick-chip {
+        background: #21262d;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
+        font-size: 0.85rem;
+        font-weight: 500;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.2s;
+      }
+      .quick-chip:hover {
+        background: #388bfd33;
+        border-color: #58a6ff;
+        color: #58a6ff;
+      }
+      .command-bar {
+        padding: 14px;
+        background: #161b22;
+        border-top: 1px solid #30363d;
+        display: flex;
+        gap: 10px;
+        flex-shrink: 0;
+        position: relative;
+        z-index: 10;
+      }
+      .command-bar input {
+        flex: 1;
+        background: #0d1117;
+        border: 1px solid #30363d;
+        color: #e6edf3;
+        padding: 12px 14px;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .command-bar input:focus {
+        border-color: #58a6ff;
+      }
+      .command-bar button {
+        background: #238636;
+        color: #fff;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 0.95rem;
+        transition: background 0.2s;
+      }
+      .command-bar button:hover {
+        background: #2ea043;
+      }
+
+      /* MOBILE TOUCH CONTROLS & RESPONSIVE LAYOUT (IDEA #7 PWA) */
+      .touch-controls {
+        display: none;
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        z-index: 1100;
+        gap: 8px;
+        background: rgba(13, 17, 23, 0.85);
+        backdrop-filter: blur(8px);
+        padding: 6px 10px;
+        border-radius: 30px;
+        border: 1px solid #30363d;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      }
+      .touch-btn {
+        background: #21262d;
+        border: 1px solid #30363d;
+        color: #e6edf3;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        cursor: pointer;
+        user-select: none;
+        transition: transform 0.15s, background 0.15s;
+      }
+      .touch-btn:active {
+        transform: scale(0.92);
+        background: #388bfd;
+      }
+      #mobile-drawer-toggle {
+        display: none;
+        position: fixed;
+        bottom: 18px;
+        right: 18px;
+        z-index: 1200;
+        background: #238636;
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+        border-radius: 30px;
+        padding: 10px 18px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        display: none;
+        align-items: center;
+        gap: 8px;
+      }
+
+      @media (max-width: 860px) {
+        .touch-controls {
+          display: flex;
+        }
+        #mobile-drawer-toggle {
+          display: flex;
+        }
+        header {
+          padding: 6px 10px;
+          height: auto;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+        .brand h1 {
+          font-size: 0.95rem;
+        }
+        .brand .badge {
+          display: none;
+        }
+        .team-bar {
+          overflow-x: auto;
+          max-width: 100%;
+          padding-bottom: 2px;
+        }
+        .agent-pill {
+          padding: 3px 8px;
+          font-size: 0.75rem;
+        }
+        #agent-drawer {
+          position: fixed;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          width: 100%;
+          max-width: 420px;
+          transform: translateX(100%);
+          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          z-index: 2000;
+          box-shadow: -8px 0 28px rgba(0, 0, 0, 0.7);
+        }
+        #agent-drawer.mobile-open {
+          transform: translateX(0);
+        }
+        #mobile-drawer-close {
+          display: inline-flex !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- TOP BAR ISTITUZIONALE AZIENDALE -->
+    <header>
+      <div class="brand">
+        <h1>🏢 AziendaAI Office</h1>
+        <span class="badge" id="topbar-live-badge">SALA OPERATIVA LIVE</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="team-bar" id="team-pills"></div>
+        <button id="project-switcher-btn" onclick="openProjectModal()" title="Cambia Progetto Target / Switch Target Workspace" style="background:#21262d; color:#3fb950; border:1px solid #30363d; border-radius:6px; padding:5px 10px; font-size:0.75rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px;">📂 <span id="label-project-btn">Progetto:</span> <code id="active-project-name" style="color:#f0f6fc; font-family:Consolas,monospace;">AziendaAI</code></button>
+        <button id="kanban-toggle-btn" onclick="openKanbanModal()" style="background:#21262d; color:#58a6ff; border:1px solid #30363d; border-radius:6px; padding:5px 10px; font-size:0.75rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px;">📋 <span id="label-kanban-btn">Lavagna Task</span> <span id="kanban-count-badge" style="background:#1f6feb; color:#fff; border-radius:99px; padding:1px 6px; font-size:0.68rem;">0</span></button>
+        <button id="sound-toggle-btn" onclick="toggleRetroSound()" title="Effetti Sonori 8-Bit / 8-Bit Sound Effects" style="background:#21262d; color:#e6edf3; border:1px solid #30363d; border-radius:6px; padding:5px 9px; font-size:0.78rem; font-weight:700; cursor:pointer;">🔊</button>
+        <button id="lang-toggle-btn" onclick="toggleAppLang()" style="background:#21262d; color:#e6edf3; border:1px solid #30363d; border-radius:6px; padding:5px 10px; font-size:0.75rem; font-weight:700; cursor:pointer;">🇪🇸 ES</button>
+      </div>
+    </header>
+
+    <div class="app-layout">
+      <!-- MOTORE NATIVO PIXEL AGENTS: STANZA, ARREDI, FISICA E ANIMAZIONI -->
+      <div id="office-frame-container">
+        <div id="root"></div>
+
+        <!-- TOUCH CONTROLS PER MOBILE / PWA -->
+        <div class="touch-controls" id="touch-zoom-controls">
+          <button class="touch-btn" onclick="mobileZoom(1.2)" title="Zoom In">➕</button>
+          <button class="touch-btn" onclick="mobileZoom(0.8)" title="Zoom Out">➖</button>
+          <button class="touch-btn" onclick="mobileResetView()" title="Reset Vista" style="font-size:0.85rem;">🎯</button>
+        </div>
+      </div>
+
+      <!-- BOTTONE FLUTTUANTE MOBILE PER APRIRE LA CONSOLE AGENTE -->
+      <button id="mobile-drawer-toggle" onclick="toggleMobileDrawer()">
+        <span>💬 Console Agente</span>
+      </button>
+
+      <!-- TENDINA / CONSOLE LATERALE DELL'AGENTE SELEZIONATO -->
+      <div id="agent-drawer">
+        <div class="drawer-header">
+          <div>
+            <div class="drawer-title">
+              <span id="drawer-agent-avatar">👔</span>
+              <span id="drawer-agent-name">Alberto (CEO)</span>
+              <button id="mobile-drawer-close" onclick="toggleMobileDrawer()" style="display:none; background:transparent; border:none; color:#8b949e; font-size:1.2rem; cursor:pointer; margin-left:10px;">✕</button>
+            </div>
+            <div class="drawer-desc" id="drawer-agent-role">CEO & Orchestrator</div>
+            <!-- BANNER ATTIVITÀ SINCRONIZZATO CON L'HOVER TOOLTIP -->
+            <div class="drawer-live-status" id="drawer-agent-status">
+              <span class="status-dot"></span>
+              <span id="drawer-status-text">🟢 In attesa di istruzioni (Idle)</span>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+            <span class="badge" id="drawer-status-badge">ONLINE</span>
+          </div>
+        </div>
+
+        <!-- MONITOR CONSUMO TOKEN & MEMORIA CONTESTUALE -->
+        <div class="token-monitor" id="drawer-token-monitor">
+          <div class="token-header">
+            <span>🧠 Modello: <strong id="agent-model-name" style="color:#58a6ff;">Gemini 3.8 Flash (Low)</strong> <span id="agent-who-badge" class="badge" style="background:#58a6ff;color:#0d1117;">Gemini</span></span>
+            <span id="token-usage-text" style="display:none;"></span>
+          </div>
+          <div style="display:none;">
+            <div class="token-bar-track">
+              <div class="token-bar-fill" id="token-bar-fill" style="width: 0%;"></div>
+            </div>
+            <strong id="agent-remaining-quota"></strong>
+          </div>
+          <!-- QUOTE GLOBALI ANTIGRAVITY (LIVE RPC) -->
+          <div style="margin-top:8px; padding-top:6px; border-top:1px dashed #30363d; display:flex; flex-direction:column; gap:4px; font-size:0.72rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span id="label-gemini-quota" style="color:#8b949e;">🤖 Quota Gemini (5h / Settimana):</span>
+              <strong id="global-gemini-quota" style="color:#58a6ff;">-- / --</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span id="label-claude-quota" style="color:#8b949e;">🧠 Quota Claude (5h / Settimana):</span>
+              <strong id="global-claude-quota" style="color:#3fb950;">-- / --</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- COMPONENTE DIALOG AUTORIZZAZIONE / PERMISSION (FASE 2) -->
+        <div id="drawer-permission-box" class="permission-card" style="display: none;">
+          <div class="permission-header">
+            <span class="permission-badge" id="label-perm-badge">⚠️ AUTORIZZAZIONE RICHIESTA</span>
+            <span class="permission-time" id="perm-time">12:30</span>
+          </div>
+          <div class="permission-body">
+            <div class="permission-tool" id="perm-tool">Tool: run_command</div>
+            <div class="permission-command" id="perm-command">git push origin main</div>
+            <div class="permission-desc" id="perm-desc">L'agente richiede conferma prima di eseguire questa operazione.</div>
+          </div>
+          <div class="permission-actions">
+            <button class="perm-btn perm-btn-approve" id="btn-perm-approve" onclick="respondPermission(true)">✅ Autorizza</button>
+            <button class="perm-btn perm-btn-reject" id="btn-perm-reject" onclick="respondPermission(false)">❌ Rifiuta</button>
+          </div>
+        </div>
+
+        <div class="logs-container" id="drawer-logs"></div>
+
+        <div class="quick-actions">
+          <button class="quick-chip" id="chip-check" onclick="quickTask('Verificar estado e integridad del repositorio')">🔍 Check Estado</button>
+          <button class="quick-chip" id="chip-git" onclick="quickTask('Ejecutar git status y verificar cambios')">🐙 Git Status</button>
+          <button class="quick-chip" id="chip-graphify" style="border-color:#58a6ff; color:#58a6ff;" onclick="quickTask('Consultar estado del grafo Graphify y comunidades')">🕸️ Graphify</button>
+          <button class="quick-chip" id="chip-obsidian" style="border-color:#a371f7; color:#a371f7;" onclick="quickTask('Sincronizar y consultar notas en Obsidian Vault')">💎 Obsidian Vault</button>
+          <button class="quick-chip" id="chip-audit" onclick="quickTask('Iniciar auditoría de seguridad y QA')">🛡️ Audit Seguridad</button>
+          <button class="quick-chip" id="chip-perm" style="border-color:#d29922; color:#e3b341;" onclick="simulatePermissionRequest()">⚠️ Probar Permisos</button>
+          <button class="quick-chip" id="chip-walk" style="border-color:#58a6ff; color:#58a6ff;" onclick="simulateDelegationWalk()">🚶‍♂️ Probar Delegación</button>
+          <button class="quick-chip" id="chip-lounge" style="border-color:#bc8cff; color:#bc8cff;" onclick="toggleLoungeBreak()">☕ Pausa Café</button>
+          <button class="quick-chip" id="chip-standup" style="border-color:#3fb950; color:#3fb950;" onclick="triggerStandupMeeting()">📢 Convocar Reunión</button>
+          <button class="quick-chip" id="chip-report" style="border-color:#f778ba; color:#f778ba;" onclick="openCeoReportModal(false)">📊 Informe CEO</button>
+        </div>
+
+        <div class="command-bar">
+          <input type="text" id="task-input" placeholder="Assegna un'istruzione a questo agente..." />
+          <button id="send-task-btn">Invia Task</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- POPUP MESSAGE FROM PARENT AGENT (SUL CANVAS IN CORRISPONDENZA DEGLI AGENTI) -->
+    <div id="parent-message-popup" style="
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      max-width: 680px;
+      min-width: 380px;
+      background: rgba(13, 17, 23, 0.98);
+      border: 2px solid #58a6ff;
+      border-radius: 14px;
+      padding: 18px 22px;
+      box-shadow: 0 16px 44px rgba(0, 0, 0, 0.95), 0 0 25px rgba(88, 166, 255, 0.5);
+      color: #e6edf3;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      pointer-events: none;
+      transform: translate(-50%, -100%);
+      transition: opacity 0.25s ease;
+    ">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; border-bottom:1px solid #30363d; padding-bottom:8px;">
+        <span id="parent-popup-title" style="font-size:0.92rem; font-weight:700; text-transform:uppercase; letter-spacing:0.7px; color:#58a6ff;">📨 Message from Parent Agent</span>
+        <span id="parent-popup-badge" style="font-size:0.84rem; background:#1f6feb; color:#fff; padding:4px 12px; border-radius:99px; font-weight:600;">Alberto ➔ Luigi</span>
+      </div>
+      <div id="parent-popup-text" style="font-size:1.12rem; line-height:1.6; color:#ffffff; font-weight:500; word-break:break-word; max-height:280px; overflow-y:auto;"></div>
+      <div id="parent-popup-step" style="font-size:0.86rem; color:#8b949e; margin-top:10px; font-style:italic;">🚶‍♂️ In cammino verso la postazione...</div>
+    </div>
+
+    <!-- INNOVAZIONE #3: MODALE LAVAGNA KANBAN LIVE (3 COLONNE) -->
+    <div id="kanban-modal-overlay" onclick="if(event.target===this) closeKanbanModal()" style="
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: rgba(1, 4, 9, 0.78);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    ">
+      <div style="
+        width: 100%;
+        max-width: 1080px;
+        max-height: 84vh;
+        background: #0d1117;
+        border: 1px solid #30363d;
+        border-radius: 12px;
+        box-shadow: 0 18px 48px rgba(0,0,0,0.85);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      ">
+        <div style="padding: 14px 20px; background: #161b22; border-bottom: 1px solid #30363d; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.25rem;">📋</span>
+            <h2 id="kanban-modal-title" style="font-size: 1.05rem; color: #f0f6fc; margin: 0;">Lavagna Kanban Operativa — AziendaAI</h2>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button id="kanban-clear-btn" onclick="clearAllKanbanTasks()" style="background:#21262d; color:#e6edf3; border:1px solid #30363d; border-radius:6px; padding:5px 10px; font-size:0.75rem; cursor:pointer;">🧹 Vaciar Todas</button>
+            <button onclick="closeKanbanModal()" style="background:#da3633; color:#fff; border:none; border-radius:6px; padding:5px 11px; font-size:0.78rem; font-weight:700; cursor:pointer;">✕</button>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 16px; overflow-y: auto; flex: 1;">
+          <!-- Colonna 1: In Coda -->
+          <div style="background: #161b22; border: 1px solid #30363d; border-radius: 8px; display: flex; flex-direction: column; min-height: 320px; max-height: 64vh;">
+            <div style="padding: 10px 14px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center;">
+              <strong id="kanban-col-queued-title" style="font-size: 0.84rem; color: #d29922;">⏳ In Coda / Riposo</strong>
+              <span id="kanban-col-queued-count" style="background: #21262d; color: #d29922; border-radius: 99px; padding: 1px 8px; font-size: 0.72rem; font-weight: 700;">0</span>
+            </div>
+            <div id="kanban-col-queued" style="padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; flex: 1;"></div>
+          </div>
+          <!-- Colonna 2: In Corso -->
+          <div style="background: #161b22; border: 1px solid #30363d; border-radius: 8px; display: flex; flex-direction: column; min-height: 320px; max-height: 64vh;">
+            <div style="padding: 10px 14px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center;">
+              <strong id="kanban-col-active-title" style="font-size: 0.84rem; color: #58a6ff;">⚡ In Corso / Assegnati</strong>
+              <span id="kanban-col-active-count" style="background: #21262d; color: #58a6ff; border-radius: 99px; padding: 1px 8px; font-size: 0.72rem; font-weight: 700;">0</span>
+            </div>
+            <div id="kanban-col-active" style="padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; flex: 1;"></div>
+          </div>
+          <!-- Colonna 3: Completati -->
+          <div style="background: #161b22; border: 1px solid #30363d; border-radius: 8px; display: flex; flex-direction: column; min-height: 320px; max-height: 64vh;">
+            <div style="padding: 10px 14px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center;">
+              <strong id="kanban-col-done-title" style="font-size: 0.84rem; color: #3fb950;">✅ Completati</strong>
+              <span id="kanban-col-done-count" style="background: #21262d; color: #3fb950; border-radius: 99px; padding: 1px 8px; font-size: 0.72rem; font-weight: 700;">0</span>
+            </div>
+            <div id="kanban-col-done" style="padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; flex: 1;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INNOVAZIONE #4: MODALE SELETTORE PROGETTO TARGET (MULTI-WORKSPACE) -->
+    <div id="project-modal-overlay" onclick="if(event.target===this) closeProjectModal()" style="
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 10001;
+      background: rgba(1, 4, 9, 0.78);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    ">
+      <div style="
+        width: 100%;
+        max-width: 580px;
+        background: #0d1117;
+        border: 1px solid #30363d;
+        border-radius: 12px;
+        box-shadow: 0 18px 48px rgba(0,0,0,0.85);
+        overflow: hidden;
+      ">
+        <div style="padding: 14px 20px; background: #161b22; border-bottom: 1px solid #30363d; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.2rem;">📂</span>
+            <h2 id="project-modal-title" style="font-size: 1rem; color: #f0f6fc; margin: 0;">Seleziona Progetto Target Operativo</h2>
+          </div>
+          <button onclick="closeProjectModal()" style="background:#da3633; color:#fff; border:none; border-radius:6px; padding:4px 10px; font-size:0.78rem; font-weight:700; cursor:pointer;">✕</button>
+        </div>
+        <div style="padding: 18px 20px; display: flex; flex-direction: column; gap: 14px;">
+          <p id="project-modal-desc" style="font-size: 0.82rem; color: #8b949e; line-height: 1.45; margin:0;">
+            🏢 <strong>Multi-Repo Software House:</strong> Seleziona un progetto salvato con 1-click o registrane uno nuovo. Il team (Alberto, Luigi, Gabri, Carlo) lavorerà nel contesto di quella cartella.
+          </p>
+          <div>
+            <div style="font-size:0.76rem; font-weight:700; color:#c9d1d9; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">📁 Progetti Registrati</div>
+            <div id="project-saved-list" style="display:flex; flex-direction:column; gap:6px; max-height:160px; overflow-y:auto; padding-right:4px;"></div>
+          </div>
+          <div style="border-top:1px solid #21262d; padding-top:12px; display:flex; flex-direction:column; gap:8px;">
+            <div style="font-size:0.76rem; font-weight:700; color:#c9d1d9; text-transform:uppercase; letter-spacing:0.5px;">➕ Aggiungi / Imposta Nuovo Progetto</div>
+            <div style="display:flex; gap:8px;">
+              <input id="project-name-input" type="text" placeholder="Nome (es: E-Commerce)" style="width:140px; background:#161b22; border:1px solid #30363d; color:#f0f6fc; padding:9px 12px; border-radius:6px; font-size:0.84rem; outline:none;" />
+              <input id="project-path-input" type="text" placeholder="Percorso assoluto (es: C:\Users\...)" style="flex:1; background:#161b22; border:1px solid #30363d; color:#f0f6fc; padding:9px 12px; border-radius:6px; font-family:Consolas,monospace; font-size:0.84rem; outline:none;" />
+            </div>
+            <div id="project-error-msg" style="display:none; color:#ff7b72; font-size:0.78rem;"></div>
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:8px;">
+            <button id="project-cancel-btn" onclick="closeProjectModal()" style="background:#21262d; color:#c9d1d9; border:1px solid #30363d; border-radius:6px; padding:8px 14px; font-size:0.82rem; cursor:pointer;">Chiudi</button>
+            <button id="project-save-btn" onclick="saveTargetProject()" style="background:#238636; color:#fff; border:none; border-radius:6px; padding:8px 16px; font-size:0.82rem; font-weight:700; cursor:pointer;">💾 Salva & Attiva</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INNOVAZIONE #6: MODALE REPORT ESECUTIVO CEO (1-CLICK MARKDOWN + DISCORD) -->
+    <div id="ceo-report-modal-overlay" onclick="if(event.target===this) closeCeoReportModal()" style="
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 10002;
+      background: rgba(1, 4, 9, 0.78);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    ">
+      <div style="
+        width: 100%;
+        max-width: 720px;
+        max-height: 82vh;
+        background: #0d1117;
+        border: 1px solid #30363d;
+        border-radius: 12px;
+        box-shadow: 0 18px 48px rgba(0,0,0,0.85);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      ">
+        <div style="padding: 14px 20px; background: #161b22; border-bottom: 1px solid #30363d; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.2rem;">📊</span>
+            <h2 id="ceo-report-modal-title" style="font-size: 1rem; color: #f0f6fc; margin: 0;">Report Esecutivo CEO — AziendaAI</h2>
+          </div>
+          <button onclick="closeCeoReportModal()" style="background:#da3633; color:#fff; border:none; border-radius:6px; padding:4px 10px; font-size:0.78rem; font-weight:700; cursor:pointer;">✕</button>
+        </div>
+        <div style="padding: 16px 20px; overflow-y: auto; flex: 1;">
+          <pre id="ceo-report-content" style="background:#161b22; border:1px solid #30363d; color:#e6edf3; padding:14px; border-radius:8px; font-family:Consolas,monospace; font-size:0.78rem; line-height:1.45; white-space:pre-wrap; word-break:break-word; margin:0;"></pre>
+        </div>
+        <div style="padding: 12px 20px; background: #161b22; border-top: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center;">
+          <span id="ceo-report-status" style="font-size: 0.76rem; color: #3fb950;"></span>
+          <div style="display: flex; gap: 8px;">
+            <button id="ceo-copy-btn" onclick="copyCeoReport()" style="background:#21262d; color:#c9d1d9; border:1px solid #30363d; border-radius:6px; padding:7px 13px; font-size:0.8rem; cursor:pointer;">📋 Copia Markdown</button>
+            <button id="ceo-discord-btn" onclick="openCeoReportModal(true)" style="background:#5865F2; color:#fff; border:none; border-radius:6px; padding:7px 14px; font-size:0.8rem; font-weight:700; cursor:pointer;">📢 Pubblica su Discord</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCRIPT BRIDGE PER SINCRONIZZARE TOPBAR, TENDINA E MOTORE CANVAS -->
+    <script>
+      // =========================================================================
+      // SISTEMA MULTILINGUA (Español predeterminado)
+      // =========================================================================
+      let appLang = localStorage.getItem('aziendaai_lang') || 'es';
+      const I18N = {
+        es: {
+          liveBadge: 'SALA OPERATIVA EN VIVO',
+          idle: 'En espera de instrucciones (Inactivo)',
+          geminiQuota: '🤖 Cuota Gemini (5h / Semanal):',
+          claudeQuota: '🧠 Cuota Claude (5h / Semanal):',
+          weeklyShort: 'sem.',
+          permReq: '⚠️ AUTORIZACIÓN REQUERIDA',
+          approve: '✅ Autorizar',
+          reject: '❌ Rechazar',
+          chipCheck: '🔍 Verificar Estado',
+          chipGit: '🐙 Git Status',
+          chipAudit: '🛡️ Auditoría Seguridad',
+          chipPerm: '⚠️ Probar Permisos',
+          chipWalk: '🚶‍♂️ Delegar Alberto→Luigi',
+          chipLoungeOff: '☕ Pausa Café',
+          chipLoungeOn: '💻 Volver al Escritorio',
+          chipStandup: '📢 Convocar Reunión',
+          kanbanBtn: 'Tablero de Tareas',
+          kanbanTitle: 'Tablero Kanban — AziendaAI',
+          kanbanClear: '🧹 Limpiar Completadas',
+          kanbanColQueued: '⏳ En Cola / Reposo',
+          kanbanColActive: '⚡ En Progreso / Asignadas',
+          kanbanColDone: '✅ Completadas',
+          kanbanEmpty: 'No hay tareas en esta columna',
+          projBtn: 'Proyecto:',
+          projModalTitle: 'Seleccionar Proyecto Objetivo',
+          projModalDesc: 'Indica la ruta de la carpeta donde trabajarán Alberto (CEO), Luigi, Gabri y Carlo (por defecto: <code style="color:#58a6ff;">C:\\react-native</code>).',
+          projCancelBtn: 'Cancelar',
+          projSaveBtn: '✅ Establecer Proyecto',
+          ceoModalTitle: 'Informe Ejecutivo CEO — AziendaAI',
+          ceoCopyBtn: '📋 Copiar Markdown',
+          ceoDiscordBtn: '📢 Copiar Informe',
+          chipReport: '📊 Informe CEO',
+          chipGhost: '👻 Ghost Sandbox',
+          ghostStatus: '👻 Ghost Sandbox:',
+          standupHeader: '📢 REUNIÓN GENERAL (STANDUP MEETING)',
+          standupWalkStep: '🚶‍♂️ Luigi, Gabri y Carlo van al escritorio de Alberto...',
+          standupTalkStep: '🤝 ¡Equipo reunido! Alineación de sprint con Alberto (CEO)...',
+          standupEndStep: '🚀 ¡Reunión finalizada! Todos regresan a sus puestos.',
+          loungeEnterLog: '☕ Pausa Café / Descanso: yendo a los sofás de la sala de relax...',
+          loungeExitLog: '💻 Fin de la pausa: ¡regreso inmediato al escritorio operativo!',
+          inputPh: 'Asigna una instrucción o tarea a este agente...',
+          sendBtn: 'Enviar Tarea',
+          walkLog: (to, msg) => `🚶‍♂️ Camina hacia ${to} para asignar: "${msg}"`,
+          walkStep: (from, to) => `🚶‍♂️ ${from} está yendo hacia ${to}...`,
+          talkStep: (from, to) => `💬 ${from} entrega la tarea a ${to}`,
+          returnStep: (from) => `↩️ ¡Entregado! ${from} regresa a su escritorio...`
+        },
+        en: {
+          liveBadge: 'LIVE OPERATIONS ROOM',
+          idle: 'Waiting for instructions (Idle)',
+          geminiQuota: '🤖 Gemini Quota (5h / Weekly):',
+          claudeQuota: '🧠 Claude Quota (5h / Weekly):',
+          weeklyShort: 'weekly',
+          permReq: '⚠️ PERMISSION REQUIRED',
+          approve: '✅ Approve',
+          reject: '❌ Reject',
+          chipCheck: '🔍 Status Check',
+          chipGit: '🐙 Git Status',
+          chipAudit: '🛡️ Security Audit',
+          chipPerm: '⚠️ Test Permission',
+          chipWalk: '🚶‍♂️ Test Delegation Alberto→Luigi',
+          chipLoungeOff: '☕ Sofa Break',
+          chipLoungeOn: '💻 Back to Desks',
+          chipStandup: '📢 Call Standup Meeting',
+          kanbanBtn: 'Task Board',
+          kanbanTitle: 'Live Kanban Task Board — AziendaAI',
+          kanbanClear: '🧹 Clear Completed',
+          kanbanColQueued: '⏳ Queued / Rest',
+          kanbanColActive: '⚡ In Progress / Dispatched',
+          kanbanColDone: '✅ Completed',
+          kanbanEmpty: 'No tasks in this column',
+          projBtn: 'Workspace:',
+          projModalTitle: 'Select Target Project Workspace',
+          projModalDesc: 'Specify the absolute folder path where Alberto (CEO), Luigi, Gabri, and Carlo should work (you can also change it from Discord using <code style="color:#58a6ff;">!project &lt;path&gt;</code>).',
+          projCancelBtn: 'Cancel',
+          projSaveBtn: '✅ Set Workspace',
+          ceoModalTitle: 'CEO Executive Report — AziendaAI',
+          ceoCopyBtn: '📋 Copy Markdown',
+          ceoDiscordBtn: '📢 Post to Discord',
+          chipReport: '📊 CEO Report',
+          chipGhost: '👻 Ghost Sandbox',
+          ghostStatus: '👻 Ghost Sandbox:',
+          standupHeader: '📢 ALL-HANDS STANDUP MEETING',
+          standupWalkStep: '🚶‍♂️ Luigi, Gabri & Carlo are gathering at Alberto\'s desk...',
+          standupTalkStep: '🤝 Team gathered! Sprint alignment in progress with Alberto (CEO)...',
+          standupEndStep: '🚀 Standup complete! Returning to workstations.',
+          loungeEnterLog: '☕ Coffee / Rest Break: walking to the lounge sofas...',
+          loungeExitLog: '💻 Break over: returning to workstation desk!',
+          inputPh: 'Assign a task or instruction to this agent...',
+          sendBtn: 'Send Task',
+          walkLog: (to, msg) => `🚶‍♂️ Walking to ${to} to deliver: "${msg}"`,
+          walkStep: (from, to) => `🚶‍♂️ ${from} is walking to ${to}...`,
+          talkStep: (from, to) => `💬 ${from} delivers message to ${to}`,
+          returnStep: (from) => `↩️ Delivered! ${from} is returning to desk...`
+        }
+      };
+
+      function applyLanguage() {
+        const i18nTexts = I18N[appLang] || I18N.es;
+        const btn = document.getElementById('lang-toggle-btn');
+        if (btn) btn.textContent = appLang === 'es' ? '🇪🇸 ES' : (appLang === 'it' ? '🇮🇹 IT' : '🇬🇧 EN');
+        const lb = document.getElementById('topbar-live-badge'); if (lb) lb.textContent = i18nTexts.liveBadge;
+        const lGem = document.getElementById('label-gemini-quota'); if (lGem) lGem.textContent = i18nTexts.geminiQuota;
+        const lCla = document.getElementById('label-claude-quota'); if (lCla) lCla.textContent = i18nTexts.claudeQuota;
+        const lPerm = document.getElementById('label-perm-badge'); if (lPerm) lPerm.textContent = i18nTexts.permReq;
+        const bApp = document.getElementById('btn-perm-approve'); if (bApp) bApp.textContent = i18nTexts.approve;
+        const bRej = document.getElementById('btn-perm-reject'); if (bRej) bRej.textContent = i18nTexts.reject;
+        const c1 = document.getElementById('chip-check'); if (c1) c1.textContent = i18nTexts.chipCheck;
+        const c2 = document.getElementById('chip-git'); if (c2) c2.textContent = i18nTexts.chipGit;
+        const c3 = document.getElementById('chip-audit'); if (c3) c3.textContent = i18nTexts.chipAudit;
+        const c4 = document.getElementById('chip-perm'); if (c4) c4.textContent = i18nTexts.chipPerm;
+        const c5 = document.getElementById('chip-walk'); if (c5) c5.textContent = i18nTexts.chipWalk;
+        const c6 = document.getElementById('chip-lounge'); if (c6) c6.textContent = (agentOnSofa && agentOnSofa[selectedId]) ? i18nTexts.chipLoungeOn : i18nTexts.chipLoungeOff;
+        const c7 = document.getElementById('chip-standup'); if (c7) c7.textContent = i18nTexts.chipStandup;
+        const c8 = document.getElementById('chip-report'); if (c8) c8.textContent = i18nTexts.chipReport;
+        const c9 = document.getElementById('chip-ghost'); if (c9) c9.textContent = i18nTexts.chipGhost;
+        const lGhost = document.getElementById('label-ghost-status'); if (lGhost) lGhost.textContent = i18nTexts.ghostStatus;
+        const kbBtn = document.getElementById('label-kanban-btn'); if (kbBtn) kbBtn.textContent = i18nTexts.kanbanBtn;
+        const kbTit = document.getElementById('kanban-modal-title'); if (kbTit) kbTit.textContent = i18nTexts.kanbanTitle;
+        const kbClr = document.getElementById('kanban-clear-btn'); if (kbClr) kbClr.textContent = i18nTexts.kanbanClear;
+        const kbC1 = document.getElementById('kanban-col-queued-title'); if (kbC1) kbC1.textContent = i18nTexts.kanbanColQueued;
+        const kbC2 = document.getElementById('kanban-col-active-title'); if (kbC2) kbC2.textContent = i18nTexts.kanbanColActive;
+        const kbC3 = document.getElementById('kanban-col-done-title'); if (kbC3) kbC3.textContent = i18nTexts.kanbanColDone;
+        const prjB = document.getElementById('label-project-btn'); if (prjB) prjB.textContent = i18nTexts.projBtn;
+        const prjT = document.getElementById('project-modal-title'); if (prjT) prjT.textContent = i18nTexts.projModalTitle;
+        const prjD = document.getElementById('project-modal-desc'); if (prjD) prjD.innerHTML = i18nTexts.projModalDesc;
+        const prjC = document.getElementById('project-cancel-btn'); if (prjC) prjC.textContent = i18nTexts.projCancelBtn;
+        const prjS = document.getElementById('project-save-btn'); if (prjS) prjS.textContent = i18nTexts.projSaveBtn;
+        const ceoT = document.getElementById('ceo-report-modal-title'); if (ceoT) ceoT.textContent = i18nTexts.ceoModalTitle;
+        const ceoC = document.getElementById('ceo-copy-btn'); if (ceoC) ceoC.textContent = i18nTexts.ceoCopyBtn;
+        const ceoD = document.getElementById('ceo-discord-btn'); if (ceoD) ceoD.textContent = i18nTexts.ceoDiscordBtn;
+        const inp = document.getElementById('task-input'); if (inp) inp.placeholder = i18nTexts.inputPh;
+        const sBtn = document.getElementById('send-task-btn'); if (sBtn) sBtn.textContent = i18nTexts.sendBtn;
+        [10, 6, 7, 8, 9].forEach(id => {
+          if (!agentStatuses[id] || agentStatuses[id].includes('Idle') || agentStatuses[id].includes('In attesa')) {
+            agentStatuses[id] = i18nTexts.idle;
+          }
+        });
+        updateStatusDisplay(selectedId);
+      }
+
+      window.toggleAppLang = function() {
+        if (appLang === 'es') appLang = 'en';
+        else if (appLang === 'en') appLang = 'it';
+        else appLang = 'es';
+        localStorage.setItem('aziendaai_lang', appLang);
+        applyLanguage();
+      };
+
+      let TEAM = [
+        { id: 10, name: 'Alberto (CEO)', role: 'CEO & Orchestrator', avatar: '👔', palette: 3 },
+        { id: 6,  name: 'Luigi (Backend)', role: 'Backend & Systems Engineer', avatar: '⚙️', palette: 0 },
+        { id: 7,  name: 'Gabri (Frontend)', role: 'Frontend Architect & UI Dev', avatar: '🎨', palette: 2 },
+        { id: 8,  name: 'Carlo (QA)', role: 'Security Auditor & Code Revisor', avatar: '🛡️', palette: 5 },
+        { id: 9,  name: 'Bruno (Auditor Negocio)', role: 'Auditor de Modelo de Negocio & Obsidian / Graphify', avatar: '💎', palette: 1 }
+      ];
+
+      let selectedId = 10;
+      const agentLogs = { 10: [], 6: [], 7: [], 8: [], 9: [] };
+      const agentStatuses = {
+        10: 'En espera de instrucciones (Inactivo)',
+        6:  'En espera de instrucciones (Inactivo)',
+        7:  'En espera de instrucciones (Inactivo)',
+        8:  'En espera de instrucciones (Inactivo)',
+        9:  'En espera de instrucciones (Inactivo)'
+      };
+      const activePermissions = {
+        10: null,
+        6:  null,
+        7:  null,
+        8:  null,
+        9:  null
+      };
+      const agentTokens = {
+        10: { used: 0, max: 200000 },
+        6:  { used: 0, max: 200000 },
+        7:  { used: 0, max: 200000 },
+        8:  { used: 0, max: 200000 },
+        9:  { used: 0, max: 200000 }
+      };
+      const agentOnSofa = { 10: false, 6: false, 7: false, 8: false, 9: false };
+      const agentWorking = { 10: false, 6: false, 7: false, 8: false, 9: false };
+      const agentLastActiveAt = { 10: 0, 6: 0, 7: 0, 8: 0, 9: 0 };
+
+      const WORK_DESK_SEATS = {
+        10: 'f-1773356768339-eo6u', // Alberto (CEO)
+        6:  'f-1773354881902-9m50', // Luigi (Backend)
+        7:  'f-1773354879805-px9b', // Gabri (Frontend)
+        8:  'f-1773354880309-yphd', // Carlo (QA)
+        9:  'f-1773356769007-a8jm'  // Bruno (Auditor Negocio / Obsidian / Graphify)
+      };
+      const LOUNGE_SOFA_SEATS = {
+        10: 'f-1773354668333-lo7w', // Divano Nord (fronte tavolino caffè)
+        6:  'f-1773354664329-hxsh', // Divano Ovest
+        7:  'f-1773354670818-r1q2', // Divano Est
+        8:  'f-1773354665989-zgrw', // Divano Sud
+        9:  'f-1773354877474-kt9s'  // Silla relax
+      };
+
+      const teamPills = document.getElementById('team-pills');
+      const drawerName = document.getElementById('drawer-agent-name');
+      const drawerRole = document.getElementById('drawer-agent-role');
+      const drawerAvatar = document.getElementById('drawer-agent-avatar');
+      const drawerStatusBadge = document.getElementById('drawer-status-badge');
+      const discordStatusBadge = document.getElementById('discord-status-badge');
+      const drawerLiveStatus = document.getElementById('drawer-agent-status');
+      const drawerStatusText = document.getElementById('drawer-status-text');
+      const tokenUsageText = document.getElementById('token-usage-text');
+      const tokenBarFill = document.getElementById('token-bar-fill');
+      const agentRemainingQuota = document.getElementById('agent-remaining-quota');
+      const agentModelName = document.getElementById('agent-model-name');
+      const globalGeminiQuota = document.getElementById('global-gemini-quota');
+      const globalClaudeQuota = document.getElementById('global-claude-quota');
+
+      let liveGlobalQuota = null;
+
+      function updateTokenDisplay(id) {
+        if (id !== selectedId) return;
+        const tok = agentTokens[id] || { used: 0, max: 200000 };
+        const usedK = (tok.used / 1000).toFixed(1);
+        const maxK = (tok.max / 1000).toFixed(0);
+        const pct = Math.min(100, Math.round((tok.used / tok.max) * 100));
+        const remainingPct = Math.max(0, 100 - pct);
+        
+        tokenUsageText.textContent = `${usedK}k / ${maxK}k (${pct}%)`;
+        tokenBarFill.style.width = `${pct}%`;
+        if (agentRemainingQuota) {
+          agentRemainingQuota.textContent = `${remainingPct}% rimanente`;
+          agentRemainingQuota.style.color = remainingPct > 40 ? '#3fb950' : (remainingPct > 15 ? '#d29922' : '#da3633');
+        }
+        if (pct < 60) {
+          tokenBarFill.style.background = '#2ea043';
+        } else if (pct < 85) {
+          tokenBarFill.style.background = '#d29922';
+        } else {
+          tokenBarFill.style.background = '#da3633';
+        }
+
+        // Aggiorna modello reale dell'agente selezionato
+        if (agentModelName) {
+          if (liveGlobalQuota && liveGlobalQuota.subagents) {
+            const sub = liveGlobalQuota.subagents.find(s => s.id === selectedId);
+            if (sub && sub.model) {
+              agentModelName.textContent = sub.model;
+              const isCl = sub.model.includes('Claude'); agentModelName.style.color = isCl ? '#bc8cff' : '#58a6ff'; const wb = document.getElementById('agent-who-badge'); if (wb) { wb.textContent = isCl ? 'Claude Alterego' : 'Gemini'; wb.style.background = isCl ? '#bc8cff' : '#58a6ff'; }
+            }
+          } else {
+            agentModelName.textContent = selectedId === 10 ? 'Gemini 3.8 Flash (Low)' : 'Gemini 3.8 Flash (Tiered)';
+          }
+        }
+
+        // Aggiorna quote globali Antigravity (5h e Weekly) con formato IDENTICO tra Gemini e Claude
+        if (liveGlobalQuota) {
+          const t = I18N[appLang] || I18N.es;
+          const hm = v => { const d = new Date(v); return isNaN(d) ? '--' : d.toLocaleTimeString(appLang === 'it' ? 'it-IT' : 'en-GB', { hour: '2-digit', minute: '2-digit' }); };
+          if (globalGeminiQuota && liveGlobalQuota.gemini) {
+            const g = liveGlobalQuota.gemini;
+            const g5hNum = g.fiveHourFraction || 0;
+            globalGeminiQuota.textContent = `${g.fiveHour} (5h, reset ${hm(g.reset5h)}) | ${g.weekly} (${t.weeklyShort})`;
+            globalGeminiQuota.style.color = g5hNum < 0.02 ? '#da3633' : (g5hNum < 0.25 ? '#d29922' : '#58a6ff');
+          }
+          if (globalClaudeQuota && liveGlobalQuota.claude) {
+            const c = liveGlobalQuota.claude;
+            const c5hNum = c.fiveHourFraction || 0;
+            globalClaudeQuota.textContent = `${c.fiveHour} (5h, reset ${hm(c.reset5h)}) | ${c.weekly} (${t.weeklyShort})`;
+            globalClaudeQuota.style.color = c5hNum < 0.02 ? '#da3633' : (c5hNum < 0.25 ? '#d29922' : (liveGlobalQuota.fallbackToClaude ? '#bc8cff' : '#3fb950'));
+          }
+        }
+      }
+
+      const drawerPermissionBox = document.getElementById('drawer-permission-box');
+      const permTime = document.getElementById('perm-time');
+      const permTool = document.getElementById('perm-tool');
+      const permCommand = document.getElementById('perm-command');
+      const permDesc = document.getElementById('perm-desc');
+      const drawerLogs = document.getElementById('drawer-logs');
+      const taskInput = document.getElementById('task-input');
+      const sendTaskBtn = document.getElementById('send-task-btn');
+
+      function renderPills() {
+        teamPills.innerHTML = '';
+        TEAM.forEach(a => {
+          const pill = document.createElement('div');
+          const hasPerm = !!activePermissions[a.id];
+          pill.className = `agent-pill ${a.id === selectedId ? 'active' : ''}`;
+          pill.innerHTML = `<span class="dot" style="${hasPerm ? 'background:#e3b341; box-shadow:0 0 8px #e3b341;' : ''}"></span><span>${escapeHtml(a.name)} ${hasPerm ? '⚠️' : ''}</span>`;
+          pill.onclick = () => selectAgent(a.id, true);
+          teamPills.appendChild(pill);
+        });
+      }
+
+      function updateStatusDisplay(id) {
+        if (id !== selectedId) return;
+        const status = agentStatuses[id] || 'In attesa di istruzioni (Idle)';
+        drawerStatusText.textContent = status;
+        if (status.includes('Idle') || status.includes('attesa')) {
+          drawerLiveStatus.className = 'drawer-live-status';
+        } else {
+          drawerLiveStatus.className = 'drawer-live-status active';
+        }
+        updateTokenDisplay(id);
+      }
+
+      function renderPermissionBox() {
+        const perm = activePermissions[selectedId];
+        if (perm) {
+          drawerPermissionBox.style.display = 'block';
+          permTime.textContent = perm.time || new Date().toLocaleTimeString();
+          permTool.textContent = `Tool: ${perm.tool || 'run_command'}`;
+          permCommand.textContent = perm.command || 'Operazione critica da autorizzare';
+          permDesc.textContent = perm.description || 'L\'agente richiede autorizzazione prima di procedere.';
+        } else {
+          drawerPermissionBox.style.display = 'none';
+        }
+        renderPills();
+      }
+
+      function respondPermission(approved) {
+        const perm = activePermissions[selectedId];
+        if (!perm) return;
+        const time = new Date().toLocaleTimeString();
+        const actionStr = approved ? 'AUTORIZZATO' : 'RIFIUTATO';
+        appendLog(selectedId, `[${time}] ${approved ? '🟢' : '🔴'} Permesso ${actionStr}: ${perm.tool} -> "${perm.command}"`, approved ? 'activity' : 'perm-warn');
+
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({
+            type: 'permissionResponse',
+            agentId: selectedId,
+            requestId: perm.requestId,
+            tool: perm.tool,
+            command: perm.command,
+            approved: approved
+          }));
+        }
+
+        activePermissions[selectedId] = null;
+        renderPermissionBox();
+        agentStatuses[selectedId] = approved ? `⚡ Esecuzione autorizzata: ${perm.tool}` : '🟢 In attesa di istruzioni (Idle)';
+        updateStatusDisplay(selectedId);
+      }
+
+      function simulatePermissionRequest(agentId = selectedId, tool = 'run_command', command = 'git push origin main') {
+        const time = new Date().toLocaleTimeString();
+        const req = {
+          agentId: selectedId,
+          requestId: `perm_${Date.now()}`,
+          tool: tool,
+          command: command,
+          description: 'Richiesta di approvazione per esecuzione operazione sul repository.',
+          time: time
+        };
+        activePermissions[selectedId] = req;
+        renderPermissionBox();
+        appendLog(selectedId, `[${time}] ⚠️ Richiesta autorizzazione in sospeso per: ${tool} -> "${command}"`, 'perm-warn');
+        agentStatuses[selectedId] = `⚠️ In attesa di approvazione (${tool})`;
+        updateStatusDisplay(selectedId);
+
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({
+            type: 'requestPermission',
+            agentId: selectedId,
+            requestId: req.requestId,
+            tool: tool,
+            command: command,
+            description: req.description
+          }));
+        }
+      }
+
+      function selectAgent(id, notifyWs = false) {
+        selectedId = Number(id);
+        renderPills();
+        const a = TEAM.find(x => x.id === selectedId) || TEAM[0];
+        drawerName.textContent = a.name;
+        drawerRole.textContent = a.role;
+        drawerAvatar.textContent = a.avatar;
+
+        updateStatusDisplay(selectedId);
+        renderPermissionBox();
+        updateTokenDisplay(selectedId);
+        updateLoungeChipUI();
+
+        drawerLogs.innerHTML = '';
+        const list = agentLogs[selectedId] || [];
+        if (list.length === 0) {
+          appendLogElement(`[${new Date().toLocaleTimeString()}] ${a.name} connesso alla sala operativa.`);
+        } else {
+          list.forEach(item => {
+            if (item && item.isCmdBox) {
+              renderCmdBox(item);
+            } else {
+              appendLogElement(item.text, item.cls);
+            }
+          });
+        }
+
+        if (notifyWs && ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: 'focusAgent', id: selectedId }));
+        }
+
+        try {
+          if (window.__pixelAgentsTestHooks && window.__pixelAgentsTestHooks.focusAgent) {
+            window.__pixelAgentsTestHooks.focusAgent(selectedId);
+          }
+        } catch {}
+      }
+
+      function appendLog(agentId, text, cls = '') {
+        const id = Number(agentId);
+        agentLogs[id] = agentLogs[id] || [];
+        agentLogs[id].push({ text, cls });
+        if (id === selectedId) {
+          appendLogElement(text, cls);
+        }
+      }
+
+      function appendLogElement(text, cls = '') {
+        const div = document.createElement('div');
+        div.className = `log-entry ${cls}`;
+        div.textContent = text;
+        drawerLogs.appendChild(div);
+        drawerLogs.scrollTop = drawerLogs.scrollHeight;
+      }
+
+      function appendCommandResultElement(agentId, cmd, output, code, time) {
+        const item = {
+          isCmdBox: true,
+          cmd: cmd,
+          output: output,
+          code: code,
+          time: time
+        };
+        const id = Number(agentId);
+        agentLogs[id] = agentLogs[id] || [];
+        agentLogs[id].push(item);
+        if (id === selectedId) {
+          renderCmdBox(item);
+        }
+      }
+
+      function renderCmdBox(item) {
+        const div = document.createElement('div');
+        div.className = 'log-entry cmd-box' + (item.isGhost ? ' ghost-mode' : '');
+        const isSuccess = item.code === 0;
+        div.innerHTML = `
+          <div class="cmd-res-header">
+            <span>${item.isGhost ? '👻 [GHOST SANDBOX] ' : '⚙️ '}${escapeHtml(item.cmd)}</span>
+            <div style="display:flex; gap:6px;">
+              ${item.isGhost ? '<span class="cmd-code ghost-badge">' + escapeHtml(item.engine || 'docker') + '</span>' : ''}
+              <span class="cmd-code ${isSuccess ? 'success' : 'err'}">${isSuccess ? 'exit 0' : 'exit ' + item.code}</span>
+            </div>
+          </div>
+          <pre class="cmd-stdout">${escapeHtml(item.output)}</pre>
+        `;
+        drawerLogs.appendChild(div);
+        drawerLogs.scrollTop = drawerLogs.scrollHeight;
+      }
+
+      function escapeHtml(str) {
+        return String(str ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      function sendTask() {
+        const text = taskInput.value.trim();
+        if (!text) return;
+        agentWorking[selectedId] = true;
+        agentLastActiveAt[selectedId] = Date.now();
+        setAgentLounge(selectedId, false, true);
+        ensureAgentAtWorkDesk(selectedId);
+        const time = new Date().toLocaleTimeString();
+        appendLog(selectedId, `[${time}] Tarea enviada: "${text}"`, 'task');
+        agentStatuses[selectedId] = `⚡ Tarea: ${text}`;
+        updateStatusDisplay(selectedId);
+        taskInput.value = '';
+
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({
+            type: 'executeTask',
+            agentId: selectedId,
+            prompt: text
+          }));
+        }
+      }
+
+      window.quickTask = function(t) {
+        taskInput.value = t;
+        sendTask();
+      };
+
+      sendTaskBtn.onclick = sendTask;
+      taskInput.onkeydown = (e) => {
+        if (e.key === 'Enter') sendTask();
+      };
+
+      renderPills();
+      selectAgent(10);
+
+      // Sincronizzazione WebSocket Live con il Server
+      const ws = new WebSocket(`ws://${window.location.host}/ws`);
+      ws.onmessage = (event) => {
+        try {
+          const msg = JSON.parse(event.data);
+          const time = new Date().toLocaleTimeString();
+
+          // Inizializzazione log storici e team dinamico (da team.config.json) dal backend
+          if (msg.type === 'init' && msg.team) {
+            if (Array.isArray(msg.team) && msg.team.length > 0) {
+              TEAM = msg.team.map(ag => ({
+                id: Number(ag.id),
+                name: ag.name,
+                role: ag.role || 'Team Member',
+                avatar: ag.avatar || '🤖',
+                palette: ag.palette
+              }));
+              renderPills();
+              selectAgent(selectedId, false);
+            }
+            msg.team.forEach(ag => {
+              if (ag.logs && Array.isArray(ag.logs)) {
+                agentLogs[ag.id] = ag.logs.map(l => ({
+                  text: l,
+                  cls: l.includes('Task') ? 'task' : (l.includes('Permesso') ? 'perm-warn' : 'activity')
+                }));
+              }
+            });
+            drawerLogs.innerHTML = '';
+            (agentLogs[selectedId] || []).forEach(item => appendLogElement(item.text, item.cls));
+          }
+
+          // Selezione / Focus dell'agente (da click su canvas o da server)
+          if (msg.type === 'agentSelected' || msg.type === 'agentFocused') {
+            const targetId = Number(msg.id || msg.agentId);
+            if (targetId && targetId !== selectedId) {
+              selectAgent(targetId, false);
+            }
+          }
+
+          // Richiesta di autorizzazione / permessi interattiva (FASE 2)
+          if (msg.type === 'agentPermissionRequest') {
+            playRetroSound('permission');
+            const targetId = Number(msg.id || msg.agentId || 10);
+            agentWorking[targetId] = true;
+            agentLastActiveAt[targetId] = Date.now();
+            agentOnSofa[targetId] = false;
+            ensureAgentAtWorkDesk(targetId);
+            activePermissions[targetId] = {
+              agentId: targetId,
+              requestId: msg.requestId,
+              tool: msg.tool,
+              command: msg.command,
+              description: msg.description,
+              time: msg.time || time
+            };
+            if (targetId === selectedId) {
+              renderPermissionBox();
+            }
+            renderPills();
+            appendLog(targetId, `[${time}] ⚠️ Richiesta autorizzazione: ${msg.tool} -> "${msg.command}"`, 'perm-warn');
+          }
+
+          // Esito risoluzione permesso
+          if (msg.type === 'permissionResolved') {
+            const targetId = Number(msg.agentId || msg.id || 10);
+            activePermissions[targetId] = null;
+            if (targetId === selectedId) {
+              renderPermissionBox();
+            }
+            renderPills();
+          }
+
+          // Risultato reale del comando eseguito dal Command Bridge Reale
+          if (msg.type === 'commandResult') {
+            playRetroSound(msg.exitCode === 0 ? 'complete' : 'permission');
+            const targetId = Number(msg.id || msg.agentId || 10);
+            agentWorking[targetId] = true;
+            agentLastActiveAt[targetId] = Date.now();
+            agentOnSofa[targetId] = false;
+            ensureAgentAtWorkDesk(targetId);
+            const time = msg.time || new Date().toLocaleTimeString();
+            appendCommandResultElement(targetId, msg.command, msg.output, msg.exitCode, time);
+          }
+
+          // Aggiornamento Quote & Modelli Reali Antigravity (Live RPC)
+          if (msg.type === 'liveQuotaUpdate' && msg.quota) {
+            liveGlobalQuota = msg.quota;
+            updateTokenDisplay(selectedId);
+          }
+
+          // Aggiornamento Token & Context Window live
+          if (msg.type === 'agentContextUsage') {
+            const targetId = Number(msg.id || msg.agentId || 10);
+            agentTokens[targetId] = {
+              used: Number(msg.contextTokens) || 0,
+              max: Number(msg.maxContextTokens) || 200000
+            };
+            if (targetId === selectedId) {
+              updateTokenDisplay(selectedId);
+            }
+          }
+
+          // Inizio esecuzione tool o comando
+          if (msg.type === 'agentToolStart') {
+            const targetId = Number(msg.id || msg.agentId || 10);
+            agentWorking[targetId] = true;
+            agentLastActiveAt[targetId] = Date.now();
+            agentOnSofa[targetId] = false;
+            setAgentLounge(targetId, false, true);
+            ensureAgentAtWorkDesk(targetId);
+            const desc = msg.status || (msg.toolName ? ('Eseguo: ' + msg.toolName) : 'Comando in esecuzione');
+            agentStatuses[targetId] = `⚡ ${desc}`;
+            updateStatusDisplay(targetId);
+            const office = window.__officeState;
+            if (office) {
+              office.agentTools = office.agentTools || {};
+              office.agentTools[targetId] = [{
+                name: msg.toolName || 'tool',
+                detail: desc,
+                status: desc,
+                done: false
+              }];
+            }
+          }
+
+          // Attività o log dettagliato
+          if (msg.type === 'agentActivity') {
+            const targetId = Number(msg.agentId || msg.id || 10);
+            const isIdleActivity = msg.tool === 'Response' || (msg.status && (msg.status.includes('Idle') || msg.status.includes('attesa') || msg.status.includes('riposo')));
+            if (!isIdleActivity) {
+              agentWorking[targetId] = true;
+              agentLastActiveAt[targetId] = Date.now();
+              agentOnSofa[targetId] = false;
+              setAgentLounge(targetId, false, true);
+              ensureAgentAtWorkDesk(targetId);
+              const office = window.__officeState;
+              if (office) {
+                office.agentTools = office.agentTools || {};
+                office.agentTools[targetId] = [{
+                  name: msg.tool || 'activity',
+                  detail: msg.status || 'Attività in corso',
+                  status: msg.status || 'In esecuzione...',
+                  done: false
+                }];
+              }
+            } else {
+              agentWorking[targetId] = false;
+              agentLastActiveAt[targetId] = Date.now() - 5000;
+              setAgentLounge(targetId, true, false);
+            }
+            if (msg.status) {
+              agentStatuses[targetId] = isIdleActivity ? '🟢 In attesa di istruzioni (Idle)' : `⚡ ${msg.status}`;
+              updateStatusDisplay(targetId);
+            }
+            if (msg.log) {
+              appendLog(targetId, msg.log, 'activity');
+            }
+          }
+
+          // Completamento tool o attesa
+          if (msg.type === 'agentStatus' && msg.status === 'waiting') {
+            const targetId = Number(msg.id || msg.agentId || 10);
+            agentWorking[targetId] = false;
+            agentLastActiveAt[targetId] = Date.now() - 5000;
+            agentStatuses[targetId] = '🟢 In attesa di istruzioni (Idle)';
+            updateStatusDisplay(targetId);
+            appendLog(targetId, `[${time}] ✔ Operazione completata. In attesa di nuove istruzioni.`, 'done');
+            const office = window.__officeState;
+            if (office && office.characters) {
+              const ch = office.characters.get(targetId);
+              if (office.agentTools && office.agentTools[targetId]) {
+                office.agentTools[targetId].forEach(t => { t.done = true; });
+              }
+            }
+            // Ritorno immediato al divano lounge
+            setAgentLounge(targetId, true, false);
+          }
+
+          if (msg.type === 'agentToolsClear') {
+            const targetId = Number(msg.id || msg.agentId || 10);
+            agentWorking[targetId] = false;
+            agentLastActiveAt[targetId] = Date.now() - 5000;
+            agentStatuses[targetId] = '🟢 In attesa di istruzioni (Idle)';
+            updateStatusDisplay(targetId);
+            const office = window.__officeState;
+            if (office && office.characters) {
+              const ch = office.characters.get(targetId);
+              if (office.agentTools && office.agentTools[targetId]) {
+                office.agentTools[targetId].forEach(t => { t.done = true; });
+              }
+            }
+            // Ritorno immediato al divano lounge
+            setAgentLounge(targetId, true, false);
+          }
+
+          // Instradamento fisico: un agente (es. Alberto CEO) cammina verso un sottoposto e mostra il popup "Message from Parent Agent"
+          if (msg.type === 'agentDelegation') {
+            const fId = Number(msg.fromAgentId || 10);
+            const tId = Number(msg.toAgentId || 6);
+            agentWorking[fId] = true;
+            agentWorking[tId] = true;
+            agentLastActiveAt[fId] = Date.now();
+            agentLastActiveAt[tId] = Date.now();
+            setAgentLounge(fId, false, true);
+            setAgentLounge(tId, false, true);
+            ensureAgentAtWorkDesk(tId);
+
+            playRetroSound(Number(msg.toAgentId) === 10 ? 'complete' : 'delegation');
+            triggerAgentDelegationWalk(
+              fId,
+              tId,
+              msg.fromName || 'Alberto (CEO)',
+              msg.toName || 'Luigi (Backend)',
+              msg.message || 'Nuovo task operativo assegnato.'
+            );
+          }
+
+          // Pausa Caffè / Divano in Sala Relax (Automatica su Rest / Inattività o Manuale)
+          if (msg.type === 'loungeBreakState') {
+            if (msg.agentLoungeStates && typeof msg.agentLoungeStates === 'object') {
+              for (const [aId, onSofa] of Object.entries(msg.agentLoungeStates)) {
+                setAgentLounge(Number(aId), Boolean(onSofa), Boolean(onSofa));
+              }
+            } else if (msg.agentId) {
+              setAgentLounge(Number(msg.agentId), Boolean(msg.active), Boolean(msg.force));
+            } else {
+              setLoungeBreak(Boolean(msg.active), false, Boolean(msg.forceAll));
+            }
+          }
+          if (msg.type === 'agentModeChange' && msg.mode) {
+            playRetroSound('lounge');
+            setLoungeBreak(msg.mode === 'rest', false, msg.mode === 'rest');
+          }
+
+          // Riunione Generale / Standup Meeting attorno alla scrivania di Alberto (CEO)
+          if (msg.type === 'standupMeetingStarted') {
+            playRetroSound('standup');
+            startStandupAnimation(msg.topic, false);
+          }
+
+          // Lavagna Kanban Live aggiornata dal server
+          if (msg.type === 'tasksQueueUpdated' && Array.isArray(msg.queue)) {
+            kanbanTasks = msg.queue;
+            renderKanbanBoard();
+            [10, 6, 7, 8, 9].forEach(aId => {
+              const hasActiveTask = kanbanTasks.some(t => Number(t.agentId) === aId && (t.status === 'running' || t.status === 'dispatched'));
+              if (hasActiveTask) {
+                agentWorking[aId] = true;
+                agentLastActiveAt[aId] = Date.now();
+                agentOnSofa[aId] = false;
+                ensureAgentAtWorkDesk(aId);
+              } else if (!activePermissions[aId]) {
+                agentWorking[aId] = false;
+                const office = window.__officeState;
+                if (office && office.agentTools && office.agentTools[aId]) {
+                  office.agentTools[aId].forEach(t => { t.done = true; });
+                }
+              }
+            });
+          }
+
+          // Cambio Progetto Target sincronizzato da Web o Discord
+          if (msg.type === 'targetProjectChanged' && msg.projectPath) {
+            currentProjectPath = msg.projectPath;
+            const nameEl = document.getElementById('active-project-name');
+            if (nameEl) nameEl.textContent = msg.projectName || msg.projectPath.split(/[\\/]/).pop();
+            const btnEl = document.getElementById('project-switcher-btn');
+            if (btnEl) btnEl.title = `Progetto Attivo: ${msg.projectPath}`;
+          }
+        } catch (err) {
+          console.error('[Webview] Errore ws message:', err);
+        }
+      };
+
+      // =========================================================================
+      // INSTRADAMENTO FISICO AGENTI & POPUP "MESSAGE FROM PARENT AGENT"
+      // =========================================================================
+      const parentPopup = document.getElementById('parent-message-popup');
+      const parentPopupTitle = document.getElementById('parent-popup-title');
+      const parentPopupBadge = document.getElementById('parent-popup-badge');
+      const parentPopupText = document.getElementById('parent-popup-text');
+      const parentPopupStep = document.getElementById('parent-popup-step');
+      let activeDelegationAnim = null;
+      const delegationQueue = [];
+      let isProcessingDelegation = false;
+
+      function enqueueDelegationWalk(fromId, toId, fromName, toName, messageText) {
+        delegationQueue.push({ fromId, toId, fromName, toName, messageText });
+        processNextDelegation();
+      }
+
+      function processNextDelegation() {
+        if (isProcessingDelegation) return;
+        if (delegationQueue.length === 0) return;
+
+        isProcessingDelegation = true;
+        const item = delegationQueue.shift();
+        executeAgentDelegationWalk(item.fromId, item.toId, item.fromName, item.toName, item.messageText, () => {
+          isProcessingDelegation = false;
+          setTimeout(processNextDelegation, 250);
+        });
+      }
+
+      function triggerAgentDelegationWalk(fromId, toId, fromName, toName, messageText) {
+        enqueueDelegationWalk(fromId, toId, fromName, toName, messageText);
+      }
+
+      function getCharacterScreenCoords(char) {
+        const hooks = window.__pixelAgentsTestHooks;
+        if (hooks && typeof hooks.getTileCenter === 'function') {
+          const tileX = (typeof char.x === 'number' ? char.x / 16 - 0.5 : char.tileCol);
+          const tileY = (typeof char.y === 'number' ? char.y / 16 - 0.5 : char.tileRow);
+          const pt = hooks.getTileCenter(tileX, tileY);
+          if (pt) return { x: pt.x, y: pt.y - 42 };
+        }
+        const overlayEl = document.querySelector(`[data-testid="agent-overlay"][data-agent-id="${char.id}"]`);
+        if (overlayEl) {
+          const r = overlayEl.getBoundingClientRect();
+          return { x: r.left + r.width / 2, y: r.top - 8 };
+        }
+        return { x: window.innerWidth * 0.35, y: window.innerHeight * 0.45 };
+      }
+
+      function findNearestWalkableNextTo(office, targetChar) {
+        const dirs = [
+          { dc: 0, dr: 1 }, { dc: 0, dr: -1 },
+          { dc: 1, dr: 0 }, { dc: -1, dr: 0 },
+          { dc: 1, dr: 1 }, { dc: -1, dr: 1 },
+          { dc: 1, dr: -1 }, { dc: -1, dr: -1 },
+          { dc: 0, dr: 2 }, { dc: 2, dr: 0 }, { dc: -2, dr: 0 }
+        ];
+        const walkableSet = new Set((office.walkableTiles || []).map(t => `${t.col},${t.row}`));
+        for (const d of dirs) {
+          const c = targetChar.tileCol + d.dc;
+          const r = targetChar.tileRow + d.dr;
+          if (walkableSet.has(`${c},${r}`)) {
+            return { col: c, row: r };
+          }
+        }
+        if (typeof office.closestFreeWalkableTile === 'function') {
+          return office.closestFreeWalkableTile(targetChar.tileCol, targetChar.tileRow);
+        }
+        return { col: targetChar.tileCol, row: targetChar.tileRow + 1 };
+      }
+
+      function executeAgentDelegationWalk(fromId, toId, fromName, toName, messageText, onComplete) {
+        const office = window.__officeState;
+        const t = I18N[appLang] || I18N.es;
+        const cleanMsg = String(messageText || '').replace(/^Messaggio operativo.*?:\s*/i, '').trim();
+        const shortMsg = cleanMsg.length > 350 ? cleanMsg.slice(0, 347) + '...' : cleanMsg;
+        const time = new Date().toLocaleTimeString();
+
+        appendLog(fromId, `[${time}] ${t.walkLog(toName, shortMsg)}`, 'task');
+        const roleLabel = Number(fromId) === 10 ? 'Delega CEO' : (Number(toId) === 10 ? 'Report per CEO' : 'Messaggio');
+        appendLog(toId, `[${time}] 📨 ${roleLabel} (${fromName}): "${shortMsg}"`, 'activity');
+
+        if (!office || !office.characters) {
+          if (typeof onComplete === 'function') onComplete();
+          return;
+        }
+        unblockAllAgentSeats(office);
+        const sender = office.characters.get(Number(fromId));
+        const receiver = office.characters.get(Number(toId));
+        if (!sender || !receiver) {
+          if (typeof onComplete === 'function') onComplete();
+          return;
+        }
+
+        if (activeDelegationAnim) {
+          cancelAnimationFrame(activeDelegationAnim.raf);
+          clearTimeout(activeDelegationAnim.timer);
+        }
+
+        // Il ricevente deve andare subito alla propria scrivania di lavoro al PC
+        agentWorking[Number(toId)] = true;
+        agentLastActiveAt[Number(toId)] = Date.now();
+        if (office) {
+          office.agentTools = office.agentTools || {};
+          office.agentTools[Number(toId)] = [{
+            name: 'delegation',
+            detail: `Delegación operativa en camino desde ${fromName}`,
+            status: 'Recibiendo tarea...',
+            done: false
+          }];
+        }
+        setAgentLounge(Number(toId), false, true);
+        ensureAgentAtWorkDesk(Number(toId));
+
+        // Per evitare che Alberto calcoli il tragitto su coordinate volanti mentre il ricevente si alza,
+        // calcola la casella di destinazione adiacente alla SCRIVANIA di lavoro del ricevente!
+        const receiverDeskSeatId = WORK_DESK_SEATS[Number(toId)];
+        const receiverDeskSeat = (office.seats && receiverDeskSeatId) ? office.seats.get(receiverDeskSeatId) : null;
+        const destAnchor = receiverDeskSeat
+          ? { tileCol: receiverDeskSeat.seatCol, tileRow: receiverDeskSeat.seatRow }
+          : receiver;
+        const destTile = findNearestWalkableNextTo(office, destAnchor);
+
+        sender.isDelivering = true;
+
+        // Temporarily unblock sender tile to allow smooth pathfinding departure
+        let senderTileKey = null;
+        if (office.blockedTiles) {
+          senderTileKey = `${sender.tileCol},${sender.tileRow}`;
+          office.blockedTiles.delete(senderTileKey);
+        }
+        office.walkToTile(sender.id, destTile.col, destTile.row);
+        if (office.blockedTiles && senderTileKey) {
+          office.blockedTiles.add(senderTileKey);
+        }
+
+        const shortFrom = fromName.split(' ')[0];
+        const shortTo = toName.split(' ')[0];
+        if (parentPopupTitle) {
+          parentPopupTitle.textContent = Number(fromId) === 10
+            ? '📋 DELEGACIÓN OPERATIVA CEO'
+            : (Number(toId) === 10 ? '📊 INFORME OPERATIVO PARA EL CEO' : '🤝 COLABORACIÓN EN EQUIPO');
+        }
+        parentPopupBadge.textContent = `${shortFrom} ➔ ${shortTo}`;
+        parentPopupText.textContent = `🚶 Acercándose a ${shortTo}...`;
+        parentPopupStep.textContent = t.walkStep(shortFrom, shortTo);
+        parentPopup.style.display = 'block';
+        parentPopup.style.opacity = '1';
+
+        let phase = 'walking_to_target'; // 'walking_to_target' -> 'talking' -> 'returning'
+        let talkStart = 0;
+        let walkStart = Date.now();
+        let isDone = false;
+
+        function finishAndProceed() {
+          if (isDone) return;
+          isDone = true;
+          parentPopup.style.opacity = '0';
+          setTimeout(() => { parentPopup.style.display = 'none'; }, 260);
+          if (activeDelegationAnim) {
+            if (activeDelegationAnim.raf) cancelAnimationFrame(activeDelegationAnim.raf);
+            if (activeDelegationAnim.timer) clearTimeout(activeDelegationAnim.timer);
+            activeDelegationAnim = null;
+          }
+          if (sender) sender.isDelivering = false;
+
+          // Carlo QA: Sblocca agentWorking per entrambi gli agenti se non hanno task attivi in coda
+          const fId = Number(fromId);
+          const tId = Number(toId);
+          const toHasActiveTask = kanbanTasks && kanbanTasks.some(k => Number(k.agentId) === tId && (k.status === 'running' || k.status === 'dispatched'));
+          if (!toHasActiveTask && !activePermissions[tId]) {
+            agentWorking[tId] = false;
+            agentLastActiveAt[tId] = Date.now();
+            if (office && office.agentTools && office.agentTools[tId]) {
+              office.agentTools[tId].forEach(t => { t.done = true; });
+            }
+          }
+          const fromHasActiveTask = kanbanTasks && kanbanTasks.some(k => Number(k.agentId) === fId && (k.status === 'running' || k.status === 'dispatched'));
+          if (!fromHasActiveTask && !activePermissions[fId]) {
+            agentWorking[fId] = false;
+            agentLastActiveAt[fId] = Date.now();
+            if (office && office.agentTools && office.agentTools[fId]) {
+              office.agentTools[fId].forEach(t => { t.done = true; });
+            }
+          }
+
+          // Se chi ha delegato o ricevuto non sta lavorando, si accomoda sul proprio divanetto lounge
+          [Number(fromId), Number(toId)].forEach(agId => {
+            if (!agentWorking[agId]) {
+              agentOnSofa[agId] = true;
+              try {
+                moveAgentToSeat(agId, LOUNGE_SOFA_SEATS[agId], true);
+              } catch {}
+            } else {
+              agentOnSofa[agId] = false;
+              try {
+                moveAgentToSeat(agId, WORK_DESK_SEATS[agId], false);
+              } catch {}
+            }
+          });
+          if (typeof onComplete === 'function') onComplete();
+        }
+
+        function stepAnim() {
+          if (isDone) return;
+          const tNow = I18N[appLang] || I18N.es;
+          const anchorChar = phase === 'talking' ? receiver : sender;
+          const pos = getCharacterScreenCoords(anchorChar);
+          parentPopup.style.left = `${Math.max(130, Math.min(window.innerWidth - 460, pos.x))}px`;
+          parentPopup.style.top = `${Math.max(80, pos.y)}px`;
+
+          const senderDist = Math.abs(sender.tileCol - destTile.col) + Math.abs(sender.tileRow - destTile.row);
+          // Verifica: il ricevente deve essere arrivato o seduto alla sua scrivania PC
+          const receiverDeskCol = receiverDeskSeat ? receiverDeskSeat.seatCol : -1;
+          const receiverDeskRow = receiverDeskSeat ? receiverDeskSeat.seatRow : -1;
+          const receiverAtDeskTile = (receiver.tileCol === receiverDeskCol && receiver.tileRow === receiverDeskRow);
+          const receiverPathFinished = (!receiver.path || receiver.path.length === 0);
+          const receiverIsSeatedAtDesk = receiverPathFinished && (receiver.seatId === receiverDeskSeatId || receiverAtDeskTile || !agentOnSofa[Number(toId)]);
+          const walkTimeout = (Date.now() - walkStart > 6000);
+
+          if (phase === 'walking_to_target') {
+            const senderArrived = (!sender.path || sender.path.length === 0 || senderDist <= 1);
+            // La fase di dialogo scatta SOLO quando il collega ricevente si è già seduto alla scrivania al PC e Alberto è arrivato
+            if ((senderArrived && receiverIsSeatedAtDesk) || walkTimeout) {
+              phase = 'talking';
+              talkStart = Date.now();
+              parentPopupText.textContent = `"${shortMsg}"`;
+              parentPopupStep.textContent = tNow.talkStep(shortFrom, shortTo);
+              try { office.showWaitingBubble(receiver.id, false); } catch {}
+            }
+          } else if (phase === 'talking' && Date.now() - talkStart > 7500) {
+            phase = 'returning';
+            parentPopupStep.textContent = tNow.returnStep(shortFrom);
+            sender.isDelivering = false;
+            try {
+              // Quando la consegna termina, se l'agente è in lavorazione torna alla scrivania, altrimenti al proprio divanetto
+              const shouldGoToSofa = !agentWorking[sender.id];
+              agentOnSofa[sender.id] = shouldGoToSofa;
+              const targetSeat = shouldGoToSofa ? LOUNGE_SOFA_SEATS[sender.id] : WORK_DESK_SEATS[sender.id];
+              moveAgentToSeat(sender.id, targetSeat, shouldGoToSofa);
+            } catch {}
+            activeDelegationAnim.timer = setTimeout(finishAndProceed, 2200);
+          }
+
+          if (!isDone) {
+            activeDelegationAnim.raf = requestAnimationFrame(stepAnim);
+          }
+        }
+
+        activeDelegationAnim = { raf: requestAnimationFrame(stepAnim), timer: null };
+      }
+
+      // =========================================================================
+      // INNOVAZIONE #1: PAUSA CAFFÈ / DIVANO FISICA IN SALA RELAX (REST & IDLE)
+      // =========================================================================
+      let isLoungeBreakActive = false;
+      let lastTeamActivityAt = Date.now();
+
+      // Rimuove in modo permanente dalle collisioni (blockedTiles) le 8 caselle dei sedili degli agenti (4 sedie PC + 4 divanetti)
+      // così il pathfinder BFS non troverà mai le sedute bloccate durante l'avvicinamento, il sedersi o il ripartire.
+      function unblockAllAgentSeats(office) {
+        if (!office) return;
+        office.agentTools = office.agentTools || {};
+        if (!office.blockedTiles || !office.seats) return;
+        [10, 6, 7, 8, 9].forEach(id => {
+          const dSeat = office.seats.get(WORK_DESK_SEATS[id]);
+          if (dSeat) office.blockedTiles.delete(`${dSeat.seatCol},${dSeat.seatRow}`);
+          const sSeat = office.seats.get(LOUNGE_SOFA_SEATS[id]);
+          if (sSeat) office.blockedTiles.delete(`${sSeat.seatCol},${sSeat.seatRow}`);
+        });
+      }
+
+      // Funzione affidabile per spostamento a sedere (Lounge o Scrivania) con unblocking BFS caselle
+      function moveAgentToSeat(agentId, targetSeatId, onSofa) {
+        const id = Number(agentId);
+        const office = window.__officeState;
+        if (!office || !office.characters || !targetSeatId) return;
+        const ch = office.characters.get(id);
+        if (!ch) return;
+
+        // Carlo QA: Prevenzione loop - se ha già questo posto ed è già arrivato o sta già camminando, esci subito!
+        const targetSeat = office.seats ? office.seats.get(targetSeatId) : null;
+        const isAlreadyAtSeat = targetSeat && (ch.tileCol === targetSeat.seatCol && ch.tileRow === targetSeat.seatRow);
+        const isAlreadyWalkingToSeat = (ch.seatId === targetSeatId && ch.path && ch.path.length > 0);
+
+        if (ch.seatId === targetSeatId && (isAlreadyAtSeat || isAlreadyWalkingToSeat)) {
+          if (onSofa && isAlreadyAtSeat) {
+            ch.state = 'type';
+            ch.seatTimer = 999999;
+            ch.wanderTimer = 999999;
+            if (targetSeat && targetSeat.facingDir) ch.dir = targetSeat.facingDir;
+          }
+          return;
+        }
+
+        unblockAllAgentSeats(office);
+
+        const oldSeat = (office.seats && ch.seatId) ? office.seats.get(ch.seatId) : null;
+
+        // Disassegna preventivamente i posti per evitare contese
+        if (office.seats) {
+          const dSeat = office.seats.get(WORK_DESK_SEATS[id]); if (dSeat) dSeat.assigned = false;
+          const sSeat = office.seats.get(LOUNGE_SOFA_SEATS[id]); if (sSeat) sSeat.assigned = false;
+          if (targetSeat) targetSeat.assigned = false;
+        }
+
+        // Assicura che la casella di partenza corrente del personaggio sia sbloccata
+        if (office.blockedTiles) {
+          office.blockedTiles.delete(`${ch.tileCol},${ch.tileRow}`);
+          if (oldSeat) office.blockedTiles.delete(`${oldSeat.seatCol},${oldSeat.seatRow}`);
+          if (targetSeat) office.blockedTiles.delete(`${targetSeat.seatCol},${targetSeat.seatRow}`);
+        }
+
+        // Per camminare, il personaggio DEVE avere isActive = true nel loop del motore Pixel Agents
+        ch.isActive = true;
+
+        if (ch.seatId !== targetSeatId) {
+          if (typeof office.reassignSeat === 'function') {
+            office.reassignSeat(id, targetSeatId);
+          }
+          if (typeof office.sendToSeat === 'function') {
+            office.sendToSeat(id);
+          }
+        } else if (typeof office.sendToSeat === 'function') {
+          office.sendToSeat(id);
+        }
+
+        // Se reassignSeat/sendToSeat non ha generato un path e il personaggio non è già al sedile, cammina direttamente alla casella
+        if (!isAlreadyAtSeat && (!ch.path || ch.path.length === 0) && targetSeat && typeof office.walkToTile === 'function') {
+          office.walkToTile(id, targetSeat.seatCol, targetSeat.seatRow);
+        }
+
+        // Carlo QA: Rimosso l'iniezione del finto tool attivo. Pulisci lo stato dei tool se l'agente è Idle!
+        if (onSofa) {
+          if (office.agentTools && office.agentTools[id]) {
+            office.agentTools[id].forEach(t => { t.done = true; });
+          }
+          if (isAlreadyAtSeat) {
+            ch.state = 'type';
+            ch.seatTimer = 999999;
+            ch.wanderTimer = 999999;
+            if (targetSeat && targetSeat.facingDir) ch.dir = targetSeat.facingDir;
+          }
+        } else {
+          // Quando va alla scrivania senza task attivi, pulisci i tool per mostrare Idle in hover
+          if (!agentWorking[id] && office.agentTools && office.agentTools[id]) {
+            office.agentTools[id].forEach(t => { t.done = true; });
+          }
+        }
+      }
+
+      function ensureAgentAtWorkDesk(targetId) {
+        const id = Number(targetId);
+        const office = window.__officeState;
+        if (!office || !office.characters) return;
+        const ch = office.characters.get(id);
+        if (!ch || ch.isDelivering) return;
+
+        agentOnSofa[id] = false;
+        const deskSeatId = WORK_DESK_SEATS[id];
+        if (!deskSeatId) return;
+
+        const deskSeat = office.seats ? office.seats.get(deskSeatId) : null;
+        const notAtDesk = !deskSeat || ch.seatId !== deskSeatId || (ch.path && ch.path.length === 0 && (ch.tileCol !== deskSeat.seatCol || ch.tileRow !== deskSeat.seatRow));
+
+        if (notAtDesk) {
+          moveAgentToSeat(id, deskSeatId, false);
+        }
+      }
+
+      function updateLoungeChipUI() {
+        const t = I18N[appLang] || I18N.es;
+        const c6 = document.getElementById('chip-lounge');
+        if (c6) {
+          c6.textContent = agentOnSofa[selectedId] ? t.chipLoungeOn : t.chipLoungeOff;
+        }
+      }
+
+      function setAgentLounge(agentId, onSofa, force = false) {
+        const id = Number(agentId);
+        const office = window.__officeState;
+        if (!office || !office.characters) return;
+
+        // Regola 2: Chi lavora DEVE RESTARE ALLA SCRIVANIA PC! Mai sul divano se sta lavorando!
+        if (onSofa && agentWorking[id]) {
+          return;
+        }
+
+        if (agentOnSofa[id] === onSofa) {
+          const ch = office.characters.get(id);
+          const targetSeat = onSofa ? LOUNGE_SOFA_SEATS[id] : WORK_DESK_SEATS[id];
+          if (ch && !ch.isDelivering && ch.seatId !== targetSeat) {
+            moveAgentToSeat(id, targetSeat, onSofa);
+          }
+          return;
+        }
+        agentOnSofa[id] = onSofa;
+        isLoungeBreakActive = Object.values(agentOnSofa).some(Boolean);
+
+        const targetSeat = onSofa ? LOUNGE_SOFA_SEATS[id] : WORK_DESK_SEATS[id];
+        if (targetSeat) {
+          moveAgentToSeat(id, targetSeat, onSofa);
+        }
+        updateLoungeChipUI();
+      }
+
+      function setLoungeBreak(active, broadcastToServer = true, forceAll = false) {
+        const office = window.__officeState;
+        if (!office || !office.characters || typeof office.reassignSeat !== 'function') return;
+
+        TEAM.forEach(a => {
+          if (active) {
+            // Regola 3: Vanno sul divano SOLO gli agenti inattivi (Idle, non working)
+            if (!agentWorking[a.id]) {
+              setAgentLounge(a.id, true, false);
+            }
+          } else {
+            setAgentLounge(a.id, false, true);
+          }
+        });
+
+        isLoungeBreakActive = Object.values(agentOnSofa).some(Boolean);
+        updateLoungeChipUI();
+        if (broadcastToServer && ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: 'toggleLoungeBreak', active }));
+        }
+      }
+
+      window.toggleLoungeBreak = function() {
+        agentLastActiveAt[selectedId] = Date.now();
+        const currentlyOnSofa = Boolean(agentOnSofa[selectedId]);
+        setAgentLounge(selectedId, !currentlyOnSofa);
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: 'toggleLoungeBreak', agentId: selectedId, active: !currentlyOnSofa }));
+        }
+      };
+
+      const IDLE_LOUNGE_TIMEOUT_MS = 4000; // Delay fluido di ~4s di inattività dopo il completamento prima di andare sul divano
+
+      // Routine di sincronizzazione automatica Idle = Divanetti Lounge / Working = Scrivania PC
+      function syncOfficeLoungeAndDesks() {
+        const office = window.__officeState;
+        if (!office || !office.characters || office.characters.size === 0) return;
+        if (activeStandupTimer) return; // Se c'è lo standup in corso, non spostare nessuno!
+        unblockAllAgentSeats(office);
+        const now = Date.now();
+
+        [10, 6, 7, 8, 9].forEach(id => {
+          const ch = office.characters.get(id);
+          if (!ch || ch.isDelivering) return; // Se sta camminando per una consegna di delega, non interrompere
+          if (ch.path && ch.path.length > 0) return; // Carlo QA: Lascia completare la camminata, non resettare ogni 2s!
+
+          // Carlo QA: Sblocca agentWorking se non ci sono task in coda e sono passati i secondi di timeout
+          const hasQueueTask = kanbanTasks && kanbanTasks.some(t => Number(t.agentId) === id && (t.status === 'running' || t.status === 'dispatched'));
+          if (!hasQueueTask && !activePermissions[id] && (now - (agentLastActiveAt[id] || 0) > IDLE_LOUNGE_TIMEOUT_MS)) {
+            agentWorking[id] = false;
+            if (office.agentTools && office.agentTools[id]) {
+              office.agentTools[id].forEach(t => { t.done = true; });
+            }
+          }
+
+          const isActivelyWorking = Boolean(agentWorking[id]) || (now - (agentLastActiveAt[id] || 0) < IDLE_LOUNGE_TIMEOUT_MS);
+
+          if (isActivelyWorking) {
+            // DEVE STARE AL PC ALLA SCRIVANIA
+            if (agentOnSofa[id]) {
+              setAgentLounge(id, false, true);
+            }
+            ensureAgentAtWorkDesk(id);
+          } else {
+            // INATTIVO (IDLE): RITORNA SEDUTO SUL DIVANO IN SALA RELAX SENZA INTASARE IL LOG
+            if (office.agentTools && office.agentTools[id]) {
+              office.agentTools[id].forEach(t => { t.done = true; });
+            }
+            const sofaSeatId = LOUNGE_SOFA_SEATS[id];
+            const sofaSeat = office.seats ? office.seats.get(sofaSeatId) : null;
+            const isAtSofa = sofaSeat && (ch.tileCol === sofaSeat.seatCol && ch.tileRow === sofaSeat.seatRow);
+
+            if (!agentOnSofa[id]) {
+              setAgentLounge(id, true, false);
+            } else if (!isAtSofa) {
+              // Se è in transito verso il divano o si è alzato, assicurati che stia camminando verso il divano
+              ch.isActive = true;
+              if (!ch.path || ch.path.length === 0) {
+                moveAgentToSeat(id, sofaSeatId, true);
+              }
+            } else {
+              // Rinforza lo stato di permanenza rilassata sul divanetto
+              ch.state = 'type';
+              ch.seatTimer = 999999;
+              ch.wanderTimer = 999999;
+              if (sofaSeat && sofaSeat.facingDir) ch.dir = sofaSeat.facingDir;
+            }
+          }
+        });
+      }
+
+      // Check frequente ogni 2 secondi per sincronizzazione fluida e naturale
+      setInterval(syncOfficeLoungeAndDesks, 2000);
+
+      // Posizionamento iniziale sul divanetto appena il canvas e l'ufficio sono pronti (~1.8s dall'avvio)
+      setTimeout(syncOfficeLoungeAndDesks, 1800);
+      setTimeout(syncOfficeLoungeAndDesks, 3500);
+
+      // =========================================================================
+      // INNOVAZIONE #2: RIUNIONE GENERALE / STANDUP MEETING ATTORNO AD ALBERTO
+      // =========================================================================
+      const STANDUP_SPOTS = {
+        6: { col: 5, row: 14 }, // Luigi accanto ad Alberto
+        7: { col: 3, row: 15 }, // Gabri di fronte ad Alberto
+        8: { col: 5, row: 15 }  // Carlo a fianco
+      };
+      let activeStandupTimer = null;
+
+      function startStandupAnimation(topicText, notifyWs = true) {
+        const office = window.__officeState;
+        if (!office || !office.characters) return;
+        if (isLoungeBreakActive) setLoungeBreak(false, false, true);
+
+        const t = I18N[appLang] || I18N.es;
+        const topic = topicText || (appLang === 'it'
+          ? 'Allineamento Sprint: stato Backend (Luigi), UI Canvas (Gabri) e Security Audit (Carlo).'
+          : 'Sprint Alignment: Backend status (Luigi), Canvas UI (Gabri) & Security Audit (Carlo).');
+        const time = new Date().toLocaleTimeString();
+
+        delegationQueue.length = 0;
+        isProcessingDelegation = false;
+        if (activeStandupTimer) clearTimeout(activeStandupTimer);
+        if (activeDelegationAnim) {
+          cancelAnimationFrame(activeDelegationAnim.raf);
+          clearTimeout(activeDelegationAnim.timer);
+          activeDelegationAnim = null;
+        }
+
+        // Fai alzare Luigi, Gabri e Carlo e falli camminare intorno alla scrivania di Alberto (CEO)
+        [6, 7, 8].forEach(id => {
+          const ch = office.characters.get(id);
+          const spot = STANDUP_SPOTS[id];
+          if (ch && spot) {
+            ch.isDelivering = true;
+            office.walkToTile(id, spot.col, spot.row);
+          }
+        });
+
+        TEAM.forEach(a => {
+          appendLog(a.id, `[${time}] 📢 Standup Meeting: "${topic}"`, 'task');
+        });
+
+        // Mostra il fumetto sopra la scrivania di Alberto (CEO)
+        const ceoChar = office.characters.get(10);
+        if (ceoChar) {
+          const popupTitleEl = parentPopup.querySelector('span');
+          if (popupTitleEl) popupTitleEl.textContent = t.standupHeader;
+          parentPopupBadge.textContent = 'Alberto + Team';
+          parentPopupText.textContent = `"${topic}"`;
+          parentPopupStep.textContent = t.standupWalkStep;
+          const pos = getCharacterScreenCoords(ceoChar);
+          parentPopup.style.left = `${Math.max(130, Math.min(window.innerWidth - 460, pos.x + 25))}px`;
+          parentPopup.style.top = `${Math.max(80, pos.y)}px`;
+          parentPopup.style.display = 'block';
+          parentPopup.style.opacity = '1';
+        }
+
+        setTimeout(() => {
+          const tNow = I18N[appLang] || I18N.es;
+          parentPopupStep.textContent = tNow.standupTalkStep;
+          [10, 6, 7, 8, 9].forEach(id => {
+            try { office.showWaitingBubble(id, false); } catch {}
+          });
+        }, 2800);
+
+        activeStandupTimer = setTimeout(() => {
+          const tNow = I18N[appLang] || I18N.es;
+          parentPopupStep.textContent = tNow.standupEndStep;
+          [6, 7, 8].forEach(id => {
+            const ch = office.characters.get(id);
+            if (ch) ch.isDelivering = false;
+            try { office.sendToSeat(id); } catch {}
+          });
+          setTimeout(() => {
+            parentPopup.style.opacity = '0';
+            setTimeout(() => { parentPopup.style.display = 'none'; }, 260);
+            activeStandupTimer = null;
+          }, 2200);
+        }, 7800);
+
+        if (notifyWs && ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: 'callStandupMeeting', topic }));
+        }
+      }
+
+      window.triggerStandupMeeting = function() {
+        lastTeamActivityAt = Date.now();
+        startStandupAnimation(null, true);
+      };
+
+      // =========================================================================
+      // INNOVAZIONE #3: LAVAGNA KANBAN LIVE (3 COLONNE SINCRONIZZATE)
+      // =========================================================================
+      let kanbanTasks = [];
+
+      async function fetchKanbanTasks() {
+        try {
+          const res = await fetch('/api/tasks/queue');
+          const data = await res.json();
+          if (Array.isArray(data.queue)) {
+            kanbanTasks = data.queue;
+            renderKanbanBoard();
+          }
+        } catch {}
+      }
+
+      function renderKanbanCard(task) {
+        const agent = TEAM.find(a => Number(a.id) === Number(task.agentId)) || { name: task.agentName || 'Alberto (CEO)', avatar: '👔' };
+        const ts = task.timestamp ? new Date(task.timestamp).toLocaleTimeString() : '';
+        const statusColor = task.status === 'completed' ? '#3fb950' : (task.status === 'failed' ? '#da3633' : (task.status === 'queued_rest' ? '#d29922' : '#58a6ff'));
+        const outPreview = task.output ? String(task.output).slice(0, 140) : '';
+        return `
+          <div style="background:#0d1117; border:1px solid #30363d; border-left:3px solid ${statusColor}; border-radius:6px; padding:9px 11px; display:flex; flex-direction:column; gap:5px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.72rem; color:#8b949e;">
+              <strong style="color:#f0f6fc;">${agent.avatar || '🤖'} ${escapeHtml(agent.name)}</strong>
+              <span>${escapeHtml(ts)}</span>
+            </div>
+            <div style="font-size:0.8rem; color:#e6edf3; font-weight:600; word-break:break-word;">${escapeHtml(task.prompt || task.command || '')}</div>
+            ${outPreview ? `<div style="font-size:0.71rem; color:#8b949e; background:#161b22; padding:5px 7px; border-radius:4px; font-family:Consolas,monospace; white-space:pre-wrap; word-break:break-word;">${escapeHtml(outPreview)}</div>` : ''}
+          </div>
+        `;
+      }
+
+      function renderKanbanBoard() {
+        const t = I18N[appLang] || I18N.es;
+        const queued = kanbanTasks.filter(x => x.status === 'queued_rest' || x.status === 'queued' || x.status === 'pending');
+        const active = kanbanTasks.filter(x => x.status === 'running' || x.status === 'dispatched');
+        const done   = kanbanTasks.filter(x => x.status === 'completed' || x.status === 'failed').slice().reverse();
+
+        const badge = document.getElementById('kanban-count-badge');
+        if (badge) badge.textContent = String(queued.length + active.length);
+
+        const c1Count = document.getElementById('kanban-col-queued-count'); if (c1Count) c1Count.textContent = String(queued.length);
+        const c2Count = document.getElementById('kanban-col-active-count'); if (c2Count) c2Count.textContent = String(active.length);
+        const c3Count = document.getElementById('kanban-col-done-count');   if (c3Count) c3Count.textContent = String(done.length);
+
+        const emptyHtml = `<div style="color:#484f58; font-size:0.76rem; text-align:center; padding:24px 8px; font-style:italic;">${t.kanbanEmpty}</div>`;
+        const col1 = document.getElementById('kanban-col-queued'); if (col1) col1.innerHTML = queued.length ? queued.map(renderKanbanCard).join('') : emptyHtml;
+        const col2 = document.getElementById('kanban-col-active'); if (col2) col2.innerHTML = active.length ? active.map(renderKanbanCard).join('') : emptyHtml;
+        const col3 = document.getElementById('kanban-col-done');   if (col3) col3.innerHTML = done.length   ? done.map(renderKanbanCard).join('')   : emptyHtml;
+      }
+
+      window.openKanbanModal = function() {
+        const el = document.getElementById('kanban-modal-overlay');
+        if (el) {
+          el.style.display = 'flex';
+          fetchKanbanTasks();
+        }
+      };
+
+      window.closeKanbanModal = function() {
+        const el = document.getElementById('kanban-modal-overlay');
+        if (el) el.style.display = 'none';
+      };
+
+      window.clearAllKanbanTasks = async function() {
+        try {
+          const res = await fetch('/api/tasks/clear', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filter: 'all' })
+          });
+          const data = await res.json();
+          if (Array.isArray(data.queue)) {
+            kanbanTasks = data.queue;
+            renderKanbanBoard();
+          }
+        } catch {}
+      };
+
+      window.clearCompletedKanbanTasks = async function() {
+        try {
+          const res = await fetch('/api/tasks/clear', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filter: 'completed' })
+          });
+          const data = await res.json();
+          if (Array.isArray(data.queue)) {
+            kanbanTasks = data.queue;
+            renderKanbanBoard();
+          }
+        } catch {}
+      };
+
+      fetchKanbanTasks();
+
+      // =========================================================================
+      // INNOVAZIONE #4: SELETTORE PROGETTO TARGET (MULTI-WORKSPACE)
+      // =========================================================================
+      let currentProjectPath = '';
+      let registeredProjects = [];
+
+      function renderProjectsListUI() {
+        const container = document.getElementById('project-saved-list');
+        if (!container) return;
+        if (!registeredProjects || registeredProjects.length === 0) {
+          container.innerHTML = '<div style="color:#8b949e; font-size:0.78rem; font-style:italic;">Nessun progetto registrato.</div>';
+          return;
+        }
+        container.innerHTML = registeredProjects.map(p => {
+          const isAct = p.isActive;
+          const bg = isAct ? 'rgba(56, 139, 253, 0.15)' : '#161b22';
+          const border = isAct ? '#58a6ff' : '#30363d';
+          const badge = isAct ? '<span style="background:#238636; color:#fff; font-size:0.68rem; padding:2px 6px; border-radius:10px; font-weight:700;">ATTIVO</span>' : '';
+          return `
+            <div style="display:flex; align-items:center; justify-content:space-between; background:${bg}; border:1px solid ${border}; border-radius:6px; padding:7px 10px;">
+              <div style="display:flex; flex-direction:column; gap:2px; overflow:hidden; padding-right:8px;">
+                <div style="font-size:0.82rem; font-weight:600; color:#f0f6fc; display:flex; align-items:center; gap:6px;">
+                  ${escapeHtml(p.name)} ${badge}
+                </div>
+                <div style="font-size:0.71rem; color:#8b949e; font-family:Consolas,monospace; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">
+                  ${escapeHtml(p.path)}
+                </div>
+              </div>
+              ${isAct ? '' : `<button class="project-activate-btn" data-path="${encodeURIComponent(p.path)}" style="background:#21262d; color:#58a6ff; border:1px solid #30363d; border-radius:4px; padding:4px 8px; font-size:0.74rem; font-weight:600; cursor:pointer; white-space:nowrap;">Attiva 👉</button>`}
+            </div>
+          `;
+        }).join('');
+        if (!container.dataset.delegated) {
+          container.dataset.delegated = '1';
+          container.addEventListener('click', ev => {
+            const btn = ev.target.closest('.project-activate-btn');
+            if (!btn || !container.contains(btn)) return;
+            window.switchDirectProject(decodeURIComponent(btn.dataset.path));
+          });
+        }
+      }
+
+      window.switchDirectProject = async function(pPath) {
+        try {
+          const res = await fetch('/api/project', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ projectPath: pPath })
+          });
+          const data = await res.json();
+          if (data && data.ok) {
+            currentProjectPath = data.projectPath;
+            if (Array.isArray(data.projects)) registeredProjects = data.projects;
+            const nameEl = document.getElementById('active-project-name');
+            if (nameEl) nameEl.textContent = data.projectName;
+            renderProjectsListUI();
+            closeProjectModal();
+            const time = new Date().toLocaleTimeString();
+            appendLog(10, `[${time}] 📂 Proyecto objetivo cambiado a: ${data.projectName} (${data.projectPath})`, 'done');
+          }
+        } catch {}
+      };
+
+      async function fetchActiveProject() {
+        try {
+          const res = await fetch('/api/project');
+          const data = await res.json();
+          if (data && data.projectPath) {
+            currentProjectPath = data.projectPath;
+            if (Array.isArray(data.projects)) registeredProjects = data.projects;
+            const nameEl = document.getElementById('active-project-name');
+            if (nameEl) nameEl.textContent = data.projectName || data.projectPath.split(/[\\/]/).pop();
+            const btnEl = document.getElementById('project-switcher-btn');
+            if (btnEl) btnEl.title = `Progetto Attivo: ${data.projectPath}`;
+            renderProjectsListUI();
+          }
+        } catch {}
+      }
+
+      window.openProjectModal = function() {
+        const el = document.getElementById('project-modal-overlay');
+        const inp = document.getElementById('project-path-input');
+        const nameInp = document.getElementById('project-name-input');
+        const err = document.getElementById('project-error-msg');
+        if (err) err.style.display = 'none';
+        if (inp) inp.value = currentProjectPath;
+        if (nameInp) nameInp.value = '';
+        renderProjectsListUI();
+        if (el) el.style.display = 'flex';
+      };
+
+      window.closeProjectModal = function() {
+        const el = document.getElementById('project-modal-overlay');
+        if (el) el.style.display = 'none';
+      };
+
+      window.saveTargetProject = async function() {
+        const inp = document.getElementById('project-path-input');
+        const nameInp = document.getElementById('project-name-input');
+        const err = document.getElementById('project-error-msg');
+        const newPath = inp ? inp.value.trim() : '';
+        const newName = nameInp ? nameInp.value.trim() : '';
+        if (!newPath) return;
+        try {
+          const res = await fetch('/api/project', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ projectPath: newPath, projectName: newName || undefined })
+          });
+          const data = await res.json();
+          if (!res.ok || !data.ok) {
+            if (err) {
+              err.textContent = data.error || 'Percorso non valido';
+              err.style.display = 'block';
+            }
+            return;
+          }
+          currentProjectPath = data.projectPath;
+          if (Array.isArray(data.projects)) registeredProjects = data.projects;
+          const nameEl = document.getElementById('active-project-name');
+          if (nameEl) nameEl.textContent = data.projectName;
+          renderProjectsListUI();
+          closeProjectModal();
+          const time = new Date().toLocaleTimeString();
+          appendLog(10, `[${time}] 📂 Proyecto objetivo cambiado a: ${data.projectName} (${data.projectPath})`, 'done');
+        } catch (e) {
+          if (err) {
+            err.textContent = e.message;
+            err.style.display = 'block';
+          }
+        }
+      };
+
+      fetchActiveProject();
+
+      // =========================================================================
+      // INNOVAZIONE #5: MOTORE AUDIO SINTETIZZATO RETRO 8-BIT (WEBAUDIO API)
+      // =========================================================================
+      let retroSoundEnabled = localStorage.getItem('aziendaai_sound') !== 'off';
+      let audioCtx = null;
+
+      function updateSoundButtonUI() {
+        const btn = document.getElementById('sound-toggle-btn');
+        if (!btn) return;
+        btn.textContent = retroSoundEnabled ? '🔊' : '🔇';
+        btn.style.opacity = retroSoundEnabled ? '1' : '0.55';
+      }
+
+      window.toggleRetroSound = function() {
+        retroSoundEnabled = !retroSoundEnabled;
+        localStorage.setItem('aziendaai_sound', retroSoundEnabled ? 'on' : 'off');
+        updateSoundButtonUI();
+        if (retroSoundEnabled) playRetroSound('complete');
+      };
+
+      function playRetroSound(kind) {
+        if (!retroSoundEnabled) return;
+        try {
+          const Ctx = window.AudioContext || window.webkitAudioContext;
+          if (!Ctx) return;
+          if (!audioCtx) audioCtx = new Ctx();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+
+          const patterns = {
+            delegation: [ { f: 523.25, d: 0.06, t: 'square' }, { f: 659.25, d: 0.08, t: 'square' } ],
+            complete:   [ { f: 523.25, d: 0.06, t: 'triangle' }, { f: 659.25, d: 0.06, t: 'triangle' }, { f: 783.99, d: 0.11, t: 'triangle' } ],
+            permission: [ { f: 440.00, d: 0.09, t: 'sawtooth' }, { f: 349.23, d: 0.12, t: 'sawtooth' } ],
+            standup:    [ { f: 587.33, d: 0.07, t: 'square' }, { f: 783.99, d: 0.07, t: 'square' }, { f: 987.77, d: 0.12, t: 'square' } ],
+            lounge:     [ { f: 493.88, d: 0.08, t: 'sine' }, { f: 392.00, d: 0.12, t: 'sine' } ]
+          };
+          const seq = patterns[kind] || patterns.delegation;
+          let offset = audioCtx.currentTime;
+          for (const note of seq) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = note.t || 'square';
+            osc.frequency.setValueAtTime(note.f, offset);
+            gain.gain.setValueAtTime(0.045, offset);
+            gain.gain.exponentialRampToValueAtTime(0.001, offset + note.d);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(offset);
+            osc.stop(offset + note.d);
+            offset += note.d + 0.015;
+          }
+        } catch {}
+      }
+
+      updateSoundButtonUI();
+
+      // =========================================================================
+      // INNOVAZIONE #6: REPORT ESECUTIVO CEO (1-CLICK MARKDOWN + DISCORD)
+      // =========================================================================
+      window.openCeoReportModal = async function(postToDiscord = false) {
+        const overlay = document.getElementById('ceo-report-modal-overlay');
+        const contentEl = document.getElementById('ceo-report-content');
+        const statusEl = document.getElementById('ceo-report-status');
+        if (overlay) overlay.style.display = 'flex';
+        if (contentEl && !postToDiscord) contentEl.textContent = '⏳ Generazione Report Esecutivo CEO in corso...';
+        if (statusEl) statusEl.textContent = '';
+
+        try {
+          const res = await fetch('/api/ceo-report', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ postToDiscord })
+          });
+          const data = await res.json();
+          if (data && data.report) {
+            if (contentEl) contentEl.textContent = data.report;
+            playRetroSound('complete');
+            if (postToDiscord && statusEl) {
+              statusEl.textContent = appLang === 'it'
+                ? '✅ Report pubblicato nel canale #📢-sala-operativa su Discord!'
+                : '✅ Report posted to #📢-sala-operativa on Discord!';
+            }
+          }
+        } catch (err) {
+          if (contentEl) contentEl.textContent = 'Errore generazione report: ' + err.message;
+        }
+      };
+
+      window.closeCeoReportModal = function() {
+        const overlay = document.getElementById('ceo-report-modal-overlay');
+        if (overlay) overlay.style.display = 'none';
+      };
+
+      window.copyCeoReport = function() {
+        const contentEl = document.getElementById('ceo-report-content');
+        const statusEl = document.getElementById('ceo-report-status');
+        if (!contentEl) return;
+        navigator.clipboard.writeText(contentEl.textContent || '').then(() => {
+          playRetroSound('complete');
+          if (statusEl) {
+            statusEl.textContent = appLang === 'it' ? '✅ Markdown copiato negli appunti!' : '✅ Markdown copied to clipboard!';
+          }
+        }).catch(() => {});
+      };
+
+      applyLanguage();
+
+      window.simulateDelegationWalk = function() {
+        const targetId = selectedId === 10 ? 6 : selectedId;
+        const targetAgent = TEAM.find(a => a.id === targetId) || TEAM[1];
+        const sampleTasks = {
+          6: 'Luigi, verifica las rutas de API del backend y las tablas de Supabase.',
+          7: 'Gabri, actualiza la interfaz y componentes de la app React Native.',
+          8: 'Carlo, ejecuta una auditoría de seguridad y valida las pruebas de código.'
+        };
+        agentWorking[10] = true;
+        agentWorking[targetAgent.id] = true;
+        agentLastActiveAt[10] = Date.now();
+        agentLastActiveAt[targetAgent.id] = Date.now();
+        setAgentLounge(10, false, true);
+        setAgentLounge(targetAgent.id, false, true);
+        ensureAgentAtWorkDesk(targetAgent.id);
+        playRetroSound('delegation');
+        triggerAgentDelegationWalk(
+          10,
+          targetAgent.id,
+          'Alberto (CEO)',
+          targetAgent.name,
+          sampleTasks[targetAgent.id] || 'Procedi con il task assegnato e riporta l\'esito.'
+        );
+      };
+
+      // REGISTRAZIONE PWA SERVICE WORKER & TOUCH CONTROLS (IDEA #7)
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(reg => {
+              console.log('[PWA] Service Worker registrato con successo:', reg.scope);
+            })
+            .catch(err => {
+              console.warn('[PWA] Registrazione Service Worker fallita:', err);
+            });
+        });
+      }
+
+      window.toggleMobileDrawer = function() {
+        const drawer = document.getElementById('agent-drawer');
+        if (drawer) {
+          drawer.classList.toggle('mobile-open');
+        }
+      };
+
+      window.mobileZoom = function(factor) {
+        const office = window.__officeState;
+        if (office && typeof office.zoom === 'number') {
+          office.zoom = Math.max(0.5, Math.min(3.0, office.zoom * factor));
+        } else {
+          const canvas = document.querySelector('#office-frame-container canvas');
+          if (canvas) {
+            const currentScale = parseFloat(canvas.getAttribute('data-scale') || '1');
+            const nextScale = Math.max(0.5, Math.min(2.5, currentScale * factor));
+            canvas.setAttribute('data-scale', nextScale);
+            canvas.style.transform = `scale(${nextScale})`;
+            canvas.style.transformOrigin = 'center center';
+          }
+        }
+      };
+
+      window.mobileResetView = function() {
+        const office = window.__officeState;
+        if (office && typeof office.zoom === 'number') {
+          office.zoom = 1.0;
+        }
+        const canvas = document.querySelector('#office-frame-container canvas');
+        if (canvas) {
+          canvas.setAttribute('data-scale', '1');
+          canvas.style.transform = 'scale(1)';
+        }
+      };
+
+      // Supporto gesture touch (Pinch-to-zoom a 2 dita) per Mobile PWA
+      (function setupTouchGestures() {
+        const container = document.getElementById('office-frame-container');
+        if (!container) return;
+
+        let initialPinchDist = 0;
+        let initialZoom = 1;
+
+        container.addEventListener('touchstart', (e) => {
+          if (e.touches.length === 2) {
+            const dx = e.touches[0].clientX - e.touches[1].clientX;
+            const dy = e.touches[0].clientY - e.touches[1].clientY;
+            initialPinchDist = Math.hypot(dx, dy);
+            const office = window.__officeState;
+            initialZoom = (office && typeof office.zoom === 'number') ? office.zoom : 1;
+          }
+        }, { passive: true });
+
+        container.addEventListener('touchmove', (e) => {
+          if (e.touches.length === 2 && initialPinchDist > 0) {
+            const dx = e.touches[0].clientX - e.touches[1].clientX;
+            const dy = e.touches[0].clientY - e.touches[1].clientY;
+            const currentDist = Math.hypot(dx, dy);
+            const factor = currentDist / initialPinchDist;
+            const office = window.__officeState;
+            if (office && typeof office.zoom === 'number') {
+              office.zoom = Math.max(0.5, Math.min(3.0, initialZoom * factor));
+            } else {
+              const canvas = container.querySelector('canvas');
+              if (canvas) {
+                const nextScale = Math.max(0.5, Math.min(2.5, initialZoom * factor));
+                canvas.setAttribute('data-scale', nextScale);
+                canvas.style.transform = `scale(${nextScale})`;
+                canvas.style.transformOrigin = 'center center';
+              }
+            }
+          }
+        }, { passive: true });
+
+        container.addEventListener('touchend', (e) => {
+          if (e.touches.length < 2) {
+            initialPinchDist = 0;
+          }
+        }, { passive: true });
+      })();
+    </script>
+
+    <!-- JS ENGINE ORIGINALE PIXEL AGENTS -->
+    <script type="module" crossorigin src="./assets/index-N6HawqUS.js"></script>
+  </body>
+</html>

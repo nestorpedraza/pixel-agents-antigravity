@@ -1,0 +1,28 @@
+[
+  {
+    "name": "ReactNative-Buskdos",
+    "path": "C:\\react-native",
+    "isDefault": true,
+    "addedAt": "2026-11-15T16:49:00.000Z"
+  },
+  {
+    "name": "AppBuskdos-Mobile",
+    "path": "C:\\react-native\\appbuskdos",
+    "addedAt": "2026-11-15T16:49:00.000Z"
+  },
+  {
+    "name": "Backend-Supabase",
+    "path": "C:\\react-native\\node-backend-supabase-buskdos",
+    "addedAt": "2026-11-15T16:49:00.000Z"
+  },
+  {
+    "name": "Buskdos-Admin",
+    "path": "C:\\react-native\\buskdos-admin",
+    "addedAt": "2026-11-15T16:49:00.000Z"
+  },
+  {
+    "name": "AziendaAI-Office",
+    "path": "C:\\pixel-agents-antigravity",
+    "addedAt": "2026-11-15T16:49:00.000Z"
+  }
+]
