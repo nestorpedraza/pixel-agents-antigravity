@@ -1,7 +1,7 @@
 {
   "name": "azienda-ai-office",
   "version": "1.1.0",
-  "description": "Sala Operativa Autonoma Ufficiale di AziendaAI con simulazione Pixel Art e Console Operativa Agenti",
+  "description": "Sala Operativa Autonoma Ufficiale di BuskdosAI con simulazione Pixel Art e Console Operativa Agenti",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

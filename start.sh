@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Launcher Linux/macOS di AziendaAI (equivalente di start.vbs):
+# Launcher Linux/macOS di BuskdosAI (equivalente di start.vbs):
 # avvia il server in background e apre la dashboard nel browser.
 # Uso: ./start.sh            -> avvia e apre il browser
 #      ./start.sh --headless -> avvia senza aprire il browser
@@ -19,7 +19,7 @@ fi
 sleep 0.5
 
 nohup node server.js >server.log 2>&1 &
-echo "AziendaAI avviato (PID $!) su http://localhost:${PORT} - log in server.log"
+echo "BuskdosAI avviato (PID $!) su http://localhost:${PORT} - log in server.log"
 
 if [ "${1:-}" != "--headless" ]; then
   sleep 1.5

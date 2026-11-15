@@ -408,7 +408,7 @@ function dispatchRealTask(agent, rawInput) {
     // Invia direttamente tramite l'eseguibile nativo language_server agentapi send-message
     const serverExe = resolveLanguageServer();
     const activeProj = routing.getTargetProject();
-    const msgContent = `[Progetto Target Attivo: ${activeProj}] Messaggio operativo dalla Dashboard Web AziendaAI: ${text}`;
+    const msgContent = `[Progetto Target Attivo: ${activeProj}] Messaggio operativo dalla Dashboard Web BuskdosAI: ${text}`;
 
     // Risoluzione dinamica delle variabili d'ambiente necessarie a language_server.exe
     // quando il server viene lanciato come demone indipendente o script di background
@@ -763,13 +763,13 @@ function loadLayout() {
       return JSON.parse(fs.readFileSync(LAYOUT_PATH, 'utf8'));
     }
   } catch (err) {
-    console.error('[AziendaAI] Errore lettura layout.json:', err.message);
+    console.error('[BuskdosAI] Errore lettura layout.json:', err.message);
   }
   return null;
 }
 
 // Cache asset in memoria all'avvio
-console.log('🔄 [AziendaAI] Cargando y preparando assets de Pixel Agents...');
+console.log('🔄 [BuskdosAI] Cargando y preparando assets de Pixel Agents...');
 const ASSET_CACHE = {
   floors: loadFloorTiles(),
   walls: loadWallTiles(),
@@ -778,9 +778,9 @@ const ASSET_CACHE = {
   furniture: loadFurnitureAssets(),
   layout: loadLayout()
 };
-console.log(`✅ [AziendaAI] Assets listos: ${ASSET_CACHE.characters.length} personajes, ${ASSET_CACHE.floors.length} pisos, ${ASSET_CACHE.walls.length} paredes, ${ASSET_CACHE.furniture.catalog.length} muebles.`);
+console.log(`✅ [BuskdosAI] Assets listos: ${ASSET_CACHE.characters.length} personajes, ${ASSET_CACHE.floors.length} pisos, ${ASSET_CACHE.walls.length} paredes, ${ASSET_CACHE.furniture.catalog.length} muebles.`);
 
-// I membri permanenti del Team AziendaAI (personalizzabili da team.config.json)
+// I membri permanenti del Team BuskdosAI (personalizzabili da team.config.json)
 const DEFAULT_TEAM = [
   {
     id: 10,
@@ -793,7 +793,7 @@ const DEFAULT_TEAM = [
     hueShift: 0,
     seatId: 'f-1773356768339-eo6u',
     isTeamLead: true,
-    directoryName: 'AziendaAI',
+    directoryName: 'BuskdosAI',
     status: 'online',
     logs: [
       `[${new Date().toLocaleTimeString()}] Alberto (CEO) ha assunto il comando operativo.`,
@@ -811,7 +811,7 @@ const DEFAULT_TEAM = [
     hueShift: 0,
     seatId: 'f-1773354881902-9m50',
     isTeamLead: false,
-    directoryName: 'AziendaAI',
+    directoryName: 'BuskdosAI',
     status: 'online',
     logs: [
       `[${new Date().toLocaleTimeString()}] Luigi ha sincronizzato il server HTTP/WebSocket.`,
@@ -829,7 +829,7 @@ const DEFAULT_TEAM = [
     hueShift: 0,
     seatId: 'f-1773354879805-px9b',
     isTeamLead: false,
-    directoryName: 'AziendaAI',
+    directoryName: 'BuskdosAI',
     status: 'online',
     logs: [
       `[${new Date().toLocaleTimeString()}] Gabri ha renderizzato la sala operativa pixel art.`,
@@ -847,7 +847,7 @@ const DEFAULT_TEAM = [
     hueShift: 0,
     seatId: 'f-1773354880309-yphd',
     isTeamLead: false,
-    directoryName: 'AziendaAI',
+    directoryName: 'BuskdosAI',
     status: 'online',
     logs: [
       `[${new Date().toLocaleTimeString()}] Carlo operativo con verifica rigorosa canali RGBA.`,
@@ -865,7 +865,7 @@ const DEFAULT_TEAM = [
     hueShift: 0,
     seatId: 'f-1773356769007-a8jm',
     isTeamLead: false,
-    directoryName: 'AziendaAI',
+    directoryName: 'BuskdosAI',
     status: 'online',
     logs: [
       `[${new Date().toLocaleTimeString()}] Bruno listo. Conectado a Graphify y Obsidian Vault.`,
@@ -893,7 +893,7 @@ try {
           hueShift: m.hueShift !== undefined ? Number(m.hueShift) : def.hueShift,
           seatId: m.seatId || def.seatId,
           isTeamLead: m.isTeamLead !== undefined ? Boolean(m.isTeamLead) : def.isTeamLead,
-          directoryName: 'AziendaAI',
+          directoryName: 'BuskdosAI',
           status: 'online',
           logs: def.logs || [`[${new Date().toLocaleTimeString()}] ${m.name} operativo.`]
         };
@@ -901,7 +901,7 @@ try {
     }
   }
 } catch (err) {
-  console.warn('[AziendaAI] Errore lettura team.config.json, uso team default:', err.message);
+  console.warn('[BuskdosAI] Errore lettura team.config.json, uso team default:', err.message);
 }
 
 // Broadcast WebSocket con gestione sicura degli errori
@@ -1011,7 +1011,7 @@ function sendOfficeInitProtocol(ws) {
     ws.send(JSON.stringify({
       type: 'agentTeamInfo',
       id: a.id,
-      teamName: 'AziendaAI',
+      teamName: 'BuskdosAI',
       agentName: a.agentName,
       isTeamLead: a.isTeamLead
     }));
@@ -1729,7 +1729,7 @@ app.post('/api/ceo-report', (req, res) => {
     const nowStr = new Date().toLocaleString('it-IT');
 
     const reportMd = [
-      `# 📊 Report Esecutivo CEO — AziendaAI`,
+      `# 📊 Report Esecutivo CEO — BuskdosAI`,
       `**Data & Ora:** ${nowStr}`,
       `**Progetto Target Attivo:** \`${projPath}\``,
       `**Modalità Operativa:** \`${mode.toUpperCase()}\``,
@@ -1888,7 +1888,7 @@ function preloadAgentLogs() {
         targetAgent.logs = recentLogs.slice(-25);
       }
     } catch (err) {
-      console.warn(`[AziendaAI] Errore caricamento transcript per ${agentId}:`, err.message);
+      console.warn(`[BuskdosAI] Errore caricamento transcript per ${agentId}:`, err.message);
     }
   }
 }

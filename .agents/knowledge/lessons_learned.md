@@ -1,6 +1,6 @@
 # Continuous Memory — Team Lessons Learned / Memoria Continua
 
-This document records the institutional memory of **AziendaAI** so that **Alberto (CEO)**, **Luigi (Backend)**, **Gabri (Frontend)**, and **Carlo (QA)** maintain consistent engineering standards.
+This document records the institutional memory of **BuskdosAI** so that **Alberto (CEO)**, **Luigi (Backend)**, **Gabri (Frontend)**, and **Carlo (QA)** maintain consistent engineering standards.
 
 ## Version Control & Release Conventions / Convenzioni Git
 - **Main Branch**: `main` (always clean, zero secrets, ready for public release).

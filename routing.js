@@ -178,7 +178,7 @@ function loadProjectsRegistry() {
     }
   } catch (_) {}
   return [
-    { name: 'AziendaAI', path: path.resolve(__dirname), isDefault: true, addedAt: new Date().toISOString() }
+    { name: 'BuskdosAI', path: path.resolve(__dirname), isDefault: true, addedAt: new Date().toISOString() }
   ];
 }
 

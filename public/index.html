@@ -3,13 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>AziendaAI Office — Sala Operativa Ufficiale</title>
+    <title>BuskdosAI Office — Sala Operativa Ufficiale</title>
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#161b22" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="AziendaAI" />
+    <meta name="apple-mobile-web-app-title" content="BuskdosAI" />
     <link rel="apple-touch-icon" href="./icons/icon-256.png" />
     <link rel="icon" type="image/png" href="./icons/icon-256.png?v=2" />
     <link rel="stylesheet" crossorigin href="./assets/index-B4KUBY28.css" />
@@ -631,12 +631,12 @@
     <!-- TOP BAR ISTITUZIONALE AZIENDALE -->
     <header>
       <div class="brand">
-        <h1>🏢 AziendaAI Office</h1>
+        <h1>🏢 BuskdosAI Office</h1>
         <span class="badge" id="topbar-live-badge">SALA OPERATIVA LIVE</span>
       </div>
       <div style="display:flex; align-items:center; gap:10px;">
         <div class="team-bar" id="team-pills"></div>
-        <button id="project-switcher-btn" onclick="openProjectModal()" title="Cambia Progetto Target / Switch Target Workspace" style="background:#21262d; color:#3fb950; border:1px solid #30363d; border-radius:6px; padding:5px 10px; font-size:0.75rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px;">📂 <span id="label-project-btn">Progetto:</span> <code id="active-project-name" style="color:#f0f6fc; font-family:Consolas,monospace;">AziendaAI</code></button>
+        <button id="project-switcher-btn" onclick="openProjectModal()" title="Cambia Progetto Target / Switch Target Workspace" style="background:#21262d; color:#3fb950; border:1px solid #30363d; border-radius:6px; padding:5px 10px; font-size:0.75rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px;">📂 <span id="label-project-btn">Progetto:</span> <code id="active-project-name" style="color:#f0f6fc; font-family:Consolas,monospace;">BuskdosAI</code></button>
         <button id="kanban-toggle-btn" onclick="openKanbanModal()" style="background:#21262d; color:#58a6ff; border:1px solid #30363d; border-radius:6px; padding:5px 10px; font-size:0.75rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px;">📋 <span id="label-kanban-btn">Lavagna Task</span> <span id="kanban-count-badge" style="background:#1f6feb; color:#fff; border-radius:99px; padding:1px 6px; font-size:0.68rem;">0</span></button>
         <button id="sound-toggle-btn" onclick="toggleRetroSound()" title="Effetti Sonori 8-Bit / 8-Bit Sound Effects" style="background:#21262d; color:#e6edf3; border:1px solid #30363d; border-radius:6px; padding:5px 9px; font-size:0.78rem; font-weight:700; cursor:pointer;">🔊</button>
         <button id="lang-toggle-btn" onclick="toggleAppLang()" style="background:#21262d; color:#e6edf3; border:1px solid #30363d; border-radius:6px; padding:5px 10px; font-size:0.75rem; font-weight:700; cursor:pointer;">🇪🇸 ES</button>
@@ -991,7 +991,7 @@
         <div style="padding: 14px 20px; background: #161b22; border-bottom: 1px solid #30363d; display: flex; align-items: center; justify-content: space-between;">
           <div style="display: flex; align-items: center; gap: 10px;">
             <span style="font-size: 1.2rem;">📊</span>
-            <h2 id="ceo-report-modal-title" style="font-size: 1rem; color: #f0f6fc; margin: 0;">Report Esecutivo CEO — AziendaAI</h2>
+            <h2 id="ceo-report-modal-title" style="font-size: 1rem; color: #f0f6fc; margin: 0;">Report Esecutivo CEO — BuskdosAI</h2>
           </div>
           <button onclick="closeCeoReportModal()" style="background:#da3633; color:#fff; border:none; border-radius:6px; padding:4px 10px; font-size:0.78rem; font-weight:700; cursor:pointer;">✕</button>
         </div>
@@ -1013,7 +1013,7 @@
       // =========================================================================
       // SISTEMA MULTILINGUA (Español predeterminado)
       // =========================================================================
-      let appLang = localStorage.getItem('aziendaai_lang') || 'es';
+      let appLang = localStorage.getItem('buskdosai_lang') || 'es';
       const I18N = {
         es: {
           liveBadge: 'SALA OPERATIVA EN VIVO',
@@ -1033,7 +1033,7 @@
           chipLoungeOn: '💻 Volver al Escritorio',
           chipStandup: '📢 Convocar Reunión',
           kanbanBtn: 'Tablero de Tareas',
-          kanbanTitle: 'Tablero Kanban — AziendaAI',
+          kanbanTitle: 'Tablero Kanban — BuskdosAI',
           kanbanClear: '🧹 Limpiar Completadas',
           kanbanColQueued: '⏳ En Cola / Reposo',
           kanbanColActive: '⚡ En Progreso / Asignadas',
@@ -1044,7 +1044,7 @@
           projModalDesc: 'Indica la ruta de la carpeta donde trabajarán Alberto (CEO), Luigi, Gabri y Carlo (por defecto: <code style="color:#58a6ff;">C:\\react-native</code>).',
           projCancelBtn: 'Cancelar',
           projSaveBtn: '✅ Establecer Proyecto',
-          ceoModalTitle: 'Informe Ejecutivo CEO — AziendaAI',
+          ceoModalTitle: 'Informe Ejecutivo CEO — BuskdosAI',
           ceoCopyBtn: '📋 Copiar Markdown',
           ceoDiscordBtn: '📢 Copiar Informe',
           chipReport: '📊 Informe CEO',
@@ -1081,7 +1081,7 @@
           chipLoungeOn: '💻 Back to Desks',
           chipStandup: '📢 Call Standup Meeting',
           kanbanBtn: 'Task Board',
-          kanbanTitle: 'Live Kanban Task Board — AziendaAI',
+          kanbanTitle: 'Live Kanban Task Board — BuskdosAI',
           kanbanClear: '🧹 Clear Completed',
           kanbanColQueued: '⏳ Queued / Rest',
           kanbanColActive: '⚡ In Progress / Dispatched',
@@ -1092,7 +1092,7 @@
           projModalDesc: 'Specify the absolute folder path where Alberto (CEO), Luigi, Gabri, and Carlo should work (you can also change it from Discord using <code style="color:#58a6ff;">!project &lt;path&gt;</code>).',
           projCancelBtn: 'Cancel',
           projSaveBtn: '✅ Set Workspace',
-          ceoModalTitle: 'CEO Executive Report — AziendaAI',
+          ceoModalTitle: 'CEO Executive Report — BuskdosAI',
           ceoCopyBtn: '📋 Copy Markdown',
           ceoDiscordBtn: '📢 Post to Discord',
           chipReport: '📊 CEO Report',
@@ -1161,7 +1161,7 @@
         if (appLang === 'es') appLang = 'en';
         else if (appLang === 'en') appLang = 'it';
         else appLang = 'es';
-        localStorage.setItem('aziendaai_lang', appLang);
+        localStorage.setItem('buskdosai_lang', appLang);
         applyLanguage();
       };
 
@@ -2960,7 +2960,7 @@
       // =========================================================================
       // INNOVAZIONE #5: MOTORE AUDIO SINTETIZZATO RETRO 8-BIT (WEBAUDIO API)
       // =========================================================================
-      let retroSoundEnabled = localStorage.getItem('aziendaai_sound') !== 'off';
+      let retroSoundEnabled = localStorage.getItem('buskdosai_sound') !== 'off';
       let audioCtx = null;
 
       function updateSoundButtonUI() {
@@ -2972,7 +2972,7 @@
 
       window.toggleRetroSound = function() {
         retroSoundEnabled = !retroSoundEnabled;
-        localStorage.setItem('aziendaai_sound', retroSoundEnabled ? 'on' : 'off');
+        localStorage.setItem('buskdosai_sound', retroSoundEnabled ? 'on' : 'off');
         updateSoundButtonUI();
         if (retroSoundEnabled) playRetroSound('complete');
       };

@@ -23,10 +23,10 @@ if (!SERVER_EXE || !fs.existsSync(SERVER_EXE)) {
 }
 
 const DEFAULT_SPECS = [
-  { id: 10, name: 'Alberto (CEO)', model: 'flash', alteregoModel: 'claude-sonnet-5-5-medium', systemPrompt: 'Sei Alberto, CEO di AziendaAI. Coordini Luigi (Backend), Gabri (Frontend) e Carlo (QA). Rispondi solo PRONTO.' },
-  { id: 6,  name: 'Luigi (Backend)', model: 'flash', alteregoModel: 'claude-sonnet-5-5-medium', systemPrompt: 'Sei Luigi, Backend Developer di AziendaAI (Node.js, API, RPC). Rispondi solo PRONTO.' },
-  { id: 7,  name: 'Gabri (Frontend)', model: 'flash', alteregoModel: 'claude-sonnet-5-5-medium', systemPrompt: 'Sei Gabri, Frontend Developer di AziendaAI (UI, Canvas, Dashboard). Rispondi solo PRONTO.' },
-  { id: 8,  name: 'Carlo (QA & Security)', model: 'flash', alteregoModel: 'claude-sonnet-5-5-medium', systemPrompt: 'Sei Carlo, QA & Security Revisor di AziendaAI. Rispondi solo PRONTO.' }
+  { id: 10, name: 'Alberto (CEO)', model: 'flash', alteregoModel: 'claude-sonnet-5-5-medium', systemPrompt: 'Sei Alberto, CEO di BuskdosAI. Coordini Luigi (Backend), Gabri (Frontend) e Carlo (QA). Rispondi solo PRONTO.' },
+  { id: 6,  name: 'Luigi (Backend)', model: 'flash', alteregoModel: 'claude-sonnet-5-5-medium', systemPrompt: 'Sei Luigi, Backend Developer di BuskdosAI (Node.js, API, RPC). Rispondi solo PRONTO.' },
+  { id: 7,  name: 'Gabri (Frontend)', model: 'flash', alteregoModel: 'claude-sonnet-5-5-medium', systemPrompt: 'Sei Gabri, Frontend Developer di BuskdosAI (UI, Canvas, Dashboard). Rispondi solo PRONTO.' },
+  { id: 8,  name: 'Carlo (QA & Security)', model: 'flash', alteregoModel: 'claude-sonnet-5-5-medium', systemPrompt: 'Sei Carlo, QA & Security Revisor di BuskdosAI. Rispondi solo PRONTO.' }
 ];
 
 let SPECS = DEFAULT_SPECS;
@@ -100,7 +100,7 @@ const config = { primary: {}, alterego: {} };
 for (const { s, model, alterModel } of plan) {
   const id = String(s.id);
   const title = s.name || s.title || `Agent ${id}`;
-  const rolePrompt = s.systemPrompt || s.role || `Sei ${title}, membro del team AziendaAI. Rispondi solo PRONTO.`;
+  const rolePrompt = s.systemPrompt || s.role || `Sei ${title}, membro del team BuskdosAI. Rispondi solo PRONTO.`;
 
   process.stdout.write(`  • Creazione ${title} (Primario ${model})... `);
   config.primary[id] = spawnAgent(title, model, rolePrompt);
@@ -114,8 +114,8 @@ for (const { s, model, alterModel } of plan) {
 fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2), 'utf8');
 console.log('\n🎉 Configurazione salvata con successo in agents.config.json!');
 console.log(process.platform === 'win32'
-  ? 'Ora puoi avviare AziendaAI con un doppio click su start.vbs'
-  : 'Ora puoi avviare AziendaAI con ./start.sh');
+  ? 'Ora puoi avviare BuskdosAI con un doppio click su start.vbs'
+  : 'Ora puoi avviare BuskdosAI con ./start.sh');
 })().catch(err => {
   console.error(`\n❌ ${err.message}`);
   process.exit(1);

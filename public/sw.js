@@ -1,5 +1,5 @@
-// Service Worker per AziendaAI PWA
-const CACHE_NAME = 'aziendaai-pwa-v1';
+// Service Worker per BuskdosAI PWA
+const CACHE_NAME = 'buskdosai-pwa-v1';
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',

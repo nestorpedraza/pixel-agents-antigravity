@@ -1,6 +1,6 @@
 {
-  "name": "AziendaAI Office — Sala Operativa",
-  "short_name": "AziendaAI",
+  "name": "BuskdosAI Office — Sala Operativa",
+  "short_name": "BuskdosAI",
   "description": "Sistema operativo multi-agente in pixel-art per lo sviluppo software autonomo.",
   "start_url": "/",
   "display": "standalone",

@@ -1,6 +1,6 @@
-# AGENTS.md — Estructura del Equipo AziendaAI
+# AGENTS.md — Estructura del Equipo BuskdosAI
 
-Bienvenido a **AziendaAI**. Este proyecto opera con una jerarquía persistente de 4 agentes de IA especializados (configurables a través de [`team.config.json`](../team.config.json)), cada uno respaldado por un par de conmutación por error automático **Gemini ⇄ Claude Alterego**.
+Bienvenido a **BuskdosAI**. Este proyecto opera con una jerarquía persistente de 4 agentes de IA especializados (configurables a través de [`team.config.json`](../team.config.json)), cada uno respaldado por un par de conmutación por error automático **Gemini ⇄ Claude Alterego**.
 
 > **Regla de Idioma / Language Rule:** Responde siempre en **Español** al usuario (Entidad Suprema) a menos que solicite expresamente otro idioma.
 

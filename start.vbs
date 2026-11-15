@@ -1,4 +1,4 @@
-' Unico launcher di AziendaAI: avvia il server in background invisibile (zero finestre CMD)
+' Unico launcher di BuskdosAI: avvia il server in background invisibile (zero finestre CMD)
 Set WshShell = CreateObject("WScript.Shell")
 Set FSO = CreateObject("Scripting.FileSystemObject")
 DirPath = FSO.GetParentFolderName(WScript.ScriptFullName)

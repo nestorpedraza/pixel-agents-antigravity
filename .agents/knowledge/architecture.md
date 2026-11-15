@@ -1,4 +1,4 @@
-# Reference Architecture — AziendaAI
+# Reference Architecture — BuskdosAI
 
 ## Core Technology Stack / Stack Tecnologico
 - **Backend (Luigi)**: Node.js (Express, `ws` WebSocket, Connect-RPC client) or Python (FastAPI).

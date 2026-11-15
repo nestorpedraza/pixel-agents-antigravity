@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🏢 AziendaAI Office — Sala Operativa Multi-Agente Autónoma
+# 🏢 BuskdosAI Office — Sala Operativa Multi-Agente Autónoma
 
 <p align="center">
   <strong>Oficina virtual en 2D Pixel-Art para Google Antigravity. Convierte subagentes de IA en un equipo de desarrollo autónomo sincronizado con el modelo de negocio de <code>C:\react-native</code> (Buskdos) mediante Graphify y Obsidian Vault.</strong>
@@ -22,7 +22,7 @@
 ### 🖥️ Sala Operativa en Vivo (`http://localhost:3000`)
 *Barra superior con los 5 integrantes del equipo, espacio central de oficina 2D donde los agentes caminan físicamente para delegarse tareas, y panel lateral con telemetría de cuotas (Gemini y Claude), logs en tiempo real y tablero Kanban.*
 
-<img src="./public/aziendaai-delegation.png" alt="AziendaAI — Delegación Operativa de Tareas en Pixel Art" width="98%" style="border-radius: 12px; border: 1px solid #30363d;" />
+<img src="./public/aziendaai-delegation.png" alt="BuskdosAI — Delegación Operativa de Tareas en Pixel Art" width="98%" style="border-radius: 12px; border: 1px solid #30363d;" />
 
 </div>
 
