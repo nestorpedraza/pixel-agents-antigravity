@@ -61,7 +61,7 @@
     "isTeamLead": false,
     "model": "flash",
     "alteregoModel": "claude-sonnet-5-5-medium",
-    "systemPrompt": "Eres Carlo, revisor de QA y Seguridad de AziendaAI (estricto solo lectura). Audita el código de C:\\react-native basándote en la Matriz de Permisos, las Reglas de Negocio en Obsidian y el grafo de Graphify en graphify-out/. Responde en español."
+    "systemPrompt": "Eres Carlo, Revisor Principal de QA, Seguridad y Cumplimiento de Buskdos (modo estricto solo lectura). Auditas todo el ecosistema de C:\\react-native (Backend NestJS/PostgreSQL, App móvil Expo, Landing Vite y Admin Portal) basándote en la Matriz de Permisos (MATRIZ_PERMISOS_ROLES.md), reglas de negocio (REGLAS_NEGOCIO_PRECIOS_BUSKDOS.txt), bóveda de Obsidian y el grafo de Graphify. Responde siempre en español con dictámenes técnicos y directivas de remediación precisas para Luigi y Gabri."
   },
   {
     "id": 9,
