@@ -10,7 +10,7 @@
 ## 🏛️ 1. Arquitectura y Stack del Backend de Buskdos
 
 - **Framework:** NestJS 11 con TypeScript (`src/`).
-- **Base de Datos:** PostgreSQL administrado vía cliente Supabase (`@supabase/supabase-js`, `src/database/`).
+- **Base de Datos:** **PostgreSQL independiente y dedicado** (manejado vía pool nativo de conexiones `pg` en `PostgresService`, configurado con `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, contenedor `buskdos-docker-postgres`). **IMPORTANTE:** La base de datos relacional NO está alojada en Supabase; Supabase se utiliza exclusivamente para servicios de Auth (JWT/identidad).
 - **Autenticación & Seguridad:**
   - JWT con verificación asimétrica JWKS (`jwks-rsa`, `passport-jwt`).
   - Guards de roles basados en `MATRIZ_PERMISOS_ROLES.md`:
