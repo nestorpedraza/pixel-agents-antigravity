@@ -7,7 +7,8 @@ const DEFAULT_PRIMARY = {
   6:  '00000000-0000-4000-8000-000000000006', // Luigi (Backend)
   7:  '00000000-0000-4000-8000-000000000007', // Gabri (Frontend)
   8:  '00000000-0000-4000-8000-000000000008', // Carlo (QA)
-  9:  '00000000-0000-4000-8000-000000000009'  // Bruno (Auditor Negocio / Obsidian / Graphify)
+  9:  '00000000-0000-4000-8000-000000000009', // Bruno (Auditor Negocio / Obsidian / Graphify)
+  11: '00000000-0000-4000-8000-000000000011'  // Nestor (Product Owner & PM)
 };
 
 const DEFAULT_ALTEREGO = {
@@ -15,7 +16,8 @@ const DEFAULT_ALTEREGO = {
   6:  '00000000-0000-4000-9000-000000000006', // luigi-backend-alterego
   7:  '00000000-0000-4000-9000-000000000007', // gabri-frontend-alterego
   8:  '00000000-0000-4000-9000-000000000008', // carlo-revisor-alterego
-  9:  '00000000-0000-4000-9000-000000000009'  // bruno-auditor-alterego
+  9:  '00000000-0000-4000-9000-000000000009', // bruno-auditor-alterego
+  11: '00000000-0000-4000-9000-000000000011'  // nestor-po-alterego
 };
 
 let PRIMARY = { ...DEFAULT_PRIMARY };

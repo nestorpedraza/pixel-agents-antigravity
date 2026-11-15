@@ -2247,6 +2247,18 @@
       "type": "SMALL_PAINTING_2",
       "col": 17,
       "row": 9
+    },
+    {
+      "uid": "f-1773356770001-nest",
+      "type": "WOODEN_CHAIR_SIDE:left",
+      "col": 7,
+      "row": 20
+    },
+    {
+      "uid": "f-1773356770003-nestsofa",
+      "type": "CUSHIONED_BENCH",
+      "col": 13,
+      "row": 16
     }
   ],
   "pets": [

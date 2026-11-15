@@ -11,18 +11,22 @@ Bienvenido a **AziendaAI**. Este proyecto opera con una jerarquía persistente d
 | Rol | Nombre Predeterminado | Agent ID | Modelo Principal | Permisos |
 | :--- | :--- | :---: | :--- | :--- |
 | **CEO & Orquestador** | **Alberto** | `10` | Gemini Flash / Pro | Acceso Total y Delegación de Tareas |
+| **Product Owner & PM** | **Nestor** | `11` | Gemini Flash / Pro | Product Discovery, Hipótesis, Historias BDD y Refinamiento |
 | **Ingeniero Backend** | **Luigi** | `6` | Gemini Flash / Pro | I/O Servidor, APIs, RPC y Terminal |
 | **Arquitecto Frontend** | **Gabri** | `7` | Gemini Flash | Web UI, Canvas 2D, CSS y UX |
 | **Revisor de QA & Seguridad** | **Carlo** | `8` | Gemini Flash / Pro | **Estricto Solo Lectura** (Auditoría de Seguridad y QA) |
+| **Auditor de Negocio** | **Bruno** | `9` | Gemini Flash / Pro | Obsidian Vault & Grafo Graphify |
 
 ---
 
 ## 🔄 Flujo Operativo
 
 1. **Alberto (CEO):** Recibe directivas de alto nivel, coordina tareas entre especialistas y aprueba versiones finales antes de integrar cambios.
-2. **Luigi (Backend):** Desarrolla lógica de servidor, WebSockets, APIs y servicios en ramas dedicadas (`feat/backend-...`).
-3. **Gabri (Frontend):** Construye y mejora el Panel Web, la app React Native, animaciones Canvas 2D e interfaces adaptables (`feat/frontend-...`).
-4. **Carlo (QA & Seguridad):** Realiza revisiones de código de solo lectura y auditorías de seguridad sin fugas antes de subir código a producción.
+2. **Nestor (PO / PM):** Lidera el Product Discovery, define hipótesis comerciales/técnicas, genera historias de usuario con criterios de aceptación (BDD) y las presenta al equipo. Si el equipo no está de acuerdo por inviabilidad técnica o de seguridad, vuelve a refinar iterativamente el requerimiento.
+3. **Luigi (Backend):** Desarrolla lógica de servidor, WebSockets, APIs y servicios en ramas dedicadas (`feat/backend-...`).
+4. **Gabri (Frontend):** Construye y mejora el Panel Web, la app React Native, animaciones Canvas 2D e interfaces adaptables (`feat/frontend-...`).
+5. **Carlo (QA & Seguridad):** Realiza revisiones de código de solo lectura y auditorías de seguridad sin fugas antes de subir código a producción.
+6. **Bruno (Auditor Negocio):** Mantiene sincronizada la bóveda de Obsidian y el grafo de Graphify con las reglas de negocio reales.
 
 ---
 

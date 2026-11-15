@@ -137,7 +137,8 @@ function dispatchRealTask(agent, rawInput) {
       6: `¡Hola! Luigi a la orden. Módulos de NestJS, base de datos PostgreSQL nativa y endpoints listos. ¿Qué implementamos?`,
       7: `¡Buenas! Gabri aquí. App en Expo y Landing Web en Vite sincronizadas. ¿En qué vista trabajamos?`,
       8: `Saludos. Carlo listo para auditorías de seguridad, código y matriz de permisos. Indícame qué verificar.`,
-      9: `¡Hola! Bruno al habla. Bóveda de Obsidian y grafos de Graphify actualizados. ¿Qué auditamos?`
+      9: `¡Hola! Bruno al habla. Bóveda de Obsidian y grafos de Graphify actualizados. ¿Qué auditamos?`,
+      11: `¡Hola! Nestor aquí. Enfocado en Product Discovery y refinamiento de historias de usuario. ¿Qué hipótesis o requerimiento validamos?`
     };
     const replyText = greetingReplies[agent.id] || `¡Hola! ${agent.name} a la orden. ¿Qué tarea deseas asignar?`;
     const logReply = `[${now.toLocaleTimeString()}] 💬 ${replyText}`;
@@ -935,7 +936,8 @@ function sendOfficeInitProtocol(ws) {
     6:  'f-1773354664329-hxsh', // Divano Ovest
     7:  'f-1773354670818-r1q2', // Divano Est
     8:  'f-1773354665989-zgrw', // Divano Sud
-    9:  'f-1773354877474-kt9s'  // Silla relax
+    9:  'f-1773354877474-kt9s', // Silla relax
+    11: 'f-1773356770003-nestsofa' // Silla relax Nestor
   };
 
   const agentIds = TEAM.map(a => a.id);
