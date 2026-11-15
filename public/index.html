@@ -637,6 +637,7 @@
       <div style="display:flex; align-items:center; gap:10px;">
         <div class="team-bar" id="team-pills"></div>
         <button id="project-switcher-btn" onclick="openProjectModal()" title="Cambia Progetto Target / Switch Target Workspace" style="background:#21262d; color:#3fb950; border:1px solid #30363d; border-radius:6px; padding:5px 10px; font-size:0.75rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px;">📂 <span id="label-project-btn">Progetto:</span> <code id="active-project-name" style="color:#f0f6fc; font-family:Consolas,monospace;">BuskdosAI</code></button>
+        <button id="org-chart-toggle-btn" onclick="openOrgChartModal()" style="background:#21262d; color:#a371f7; border:1px solid #30363d; border-radius:6px; padding:5px 10px; font-size:0.75rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px;">🏢 Organigrama</button>
         <button id="kanban-toggle-btn" onclick="openKanbanModal()" style="background:#21262d; color:#58a6ff; border:1px solid #30363d; border-radius:6px; padding:5px 10px; font-size:0.75rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px;">📋 <span id="label-kanban-btn">Lavagna Task</span> <span id="kanban-count-badge" style="background:#1f6feb; color:#fff; border-radius:99px; padding:1px 6px; font-size:0.68rem;">0</span></button>
         <button id="sound-toggle-btn" onclick="toggleRetroSound()" title="Effetti Sonori 8-Bit / 8-Bit Sound Effects" style="background:#21262d; color:#e6edf3; border:1px solid #30363d; border-radius:6px; padding:5px 9px; font-size:0.78rem; font-weight:700; cursor:pointer;">🔊</button>
         <button id="lang-toggle-btn" onclick="toggleAppLang()" style="background:#21262d; color:#e6edf3; border:1px solid #30363d; border-radius:6px; padding:5px 10px; font-size:0.75rem; font-weight:700; cursor:pointer;">🇪🇸 ES</button>
@@ -908,6 +909,133 @@
             <h4 style="font-size: 0.85rem; color: #8b949e; text-transform: uppercase; margin: 0 0 8px 0; letter-spacing: 0.5px;">📜 Histórico de Actividad y Cambios</h4>
             <div id="jira-task-history" style="display:flex; flex-direction:column; gap:8px;"></div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL ORGANIGRAMA JERÁRQUICO OFICIAL DE BUSKDOSAI -->
+    <div id="org-chart-modal-overlay" onclick="if(event.target===this) closeOrgChartModal()" style="
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 10005;
+      background: rgba(1, 4, 9, 0.85);
+      backdrop-filter: blur(5px);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    ">
+      <div style="
+        width: 100%;
+        max-width: 1020px;
+        max-height: 88vh;
+        background: #0d1117;
+        border: 1px solid #30363d;
+        border-radius: 12px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.95);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      ">
+        <div style="padding: 14px 20px; background: #161b22; border-bottom: 1px solid #30363d; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.25rem;">🏢</span>
+            <h2 style="font-size: 1.05rem; color: #f0f6fc; margin: 0; font-weight:700;">Organigrama Oficial del Equipo — BuskdosAI</h2>
+          </div>
+          <button onclick="closeOrgChartModal()" style="background:#da3633; color:#fff; border:none; border-radius:6px; padding:5px 11px; font-size:0.78rem; font-weight:700; cursor:pointer;">✕</button>
+        </div>
+
+        <div style="padding: 28px 20px; overflow-y: auto; display: flex; flex-direction: column; align-items: center; gap: 20px; flex: 1;">
+          
+          <!-- NIVEL 1: CEO & ORQUESTADOR -->
+          <div style="display: flex; flex-direction: column; align-items: center;">
+            <div style="background: linear-gradient(135deg, #1f6feb, #1158c7); border: 2px solid #58a6ff; border-radius: 10px; padding: 12px 24px; min-width: 280px; text-align: center; box-shadow: 0 8px 24px rgba(31,111,235,0.35);">
+              <div style="font-size: 1.8rem; margin-bottom: 4px;">👔</div>
+              <strong style="color: #ffffff; font-size: 1.05rem; display: block;">Alberto</strong>
+              <span style="color: #c9d1d9; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">CEO & Orquestador General</span>
+              <div style="margin-top: 6px; display: inline-block; background: rgba(0,0,0,0.25); color: #fff; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 99px;">ID: 1 · Dirección Ejecutiva</div>
+            </div>
+            <!-- Línea conectora hacia el Nivel 2 -->
+            <div style="width: 2px; height: 26px; background: #388bfd;"></div>
+            <div style="width: 580px; height: 2px; background: #388bfd;"></div>
+          </div>
+
+          <!-- NIVEL 2: GOBERNANZA, ESTRATEGIA Y PRODUCTO (BRUNO & NESTOR) -->
+          <div style="display: flex; justify-content: center; gap: 60px; width: 100%; position: relative;">
+            
+            <!-- RAMA 1: BRUNO (AUDITOR DE NEGOCIO) -->
+            <div style="display: flex; flex-direction: column; align-items: center; min-width: 260px;">
+              <div style="width: 2px; height: 16px; background: #388bfd;"></div>
+              <div style="background: #161b22; border: 1.5px solid #a371f7; border-radius: 10px; padding: 12px 18px; width: 100%; text-align: center; box-shadow: 0 4px 16px rgba(163,113,247,0.18);">
+                <div style="font-size: 1.6rem; margin-bottom: 4px;">💎</div>
+                <strong style="color: #f0f6fc; font-size: 0.95rem; display: block;">Bruno</strong>
+                <span style="color: #d2a8ff; font-size: 0.76rem; font-weight: 600;">Auditor de Negocio</span>
+                <p style="font-size: 0.7rem; color: #8b949e; margin: 6px 0 0 0;">Reglas Freemium, Precios, Obsidian Vault & Grafo Graphify</p>
+                <div style="margin-top: 6px; display: inline-block; background: #21262d; color: #a371f7; font-size: 0.68rem; font-weight: 700; padding: 1px 7px; border-radius: 99px;">ID: 2 · Gobernanza</div>
+              </div>
+            </div>
+
+            <!-- RAMA 2: NESTOR (PRODUCT OWNER & PM) -->
+            <div style="display: flex; flex-direction: column; align-items: center; min-width: 260px;">
+              <div style="width: 2px; height: 16px; background: #388bfd;"></div>
+              <div style="background: #161b22; border: 1.5px solid #f0883e; border-radius: 10px; padding: 12px 18px; width: 100%; text-align: center; box-shadow: 0 4px 16px rgba(240,136,62,0.18);">
+                <div style="font-size: 1.6rem; margin-bottom: 4px;">🎯</div>
+                <strong style="color: #f0f6fc; font-size: 0.95rem; display: block;">Nestor</strong>
+                <span style="color: #ffa657; font-size: 0.76rem; font-weight: 600;">Product Owner & PM</span>
+                <p style="font-size: 0.7rem; color: #8b949e; margin: 6px 0 0 0;">Product Discovery, SDD (SPEC.md), Criterios BDD & Backlog</p>
+                <div style="margin-top: 6px; display: inline-block; background: #21262d; color: #f0883e; font-size: 0.68rem; font-weight: 700; padding: 1px 7px; border-radius: 99px;">ID: 3 · Estrategia</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Línea conectora hacia el Nivel 3 (Equipo Técnico) -->
+          <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <div style="width: 2px; height: 20px; background: #30363d;"></div>
+            <div style="width: 780px; height: 2px; background: #30363d;"></div>
+          </div>
+
+          <!-- NIVEL 3: EQUIPO TÉCNICO DE EJECUCIÓN (LUIGI, GABRI, CARLO) -->
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%; max-width: 860px;">
+            
+            <!-- LUIGI (BACKEND) -->
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <div style="width: 2px; height: 16px; background: #30363d;"></div>
+              <div style="background: #161b22; border: 1px solid #30363d; border-top: 3px solid #238636; border-radius: 8px; padding: 12px; width: 100%; text-align: center;">
+                <div style="font-size: 1.5rem; margin-bottom: 4px;">⚙️</div>
+                <strong style="color: #f0f6fc; font-size: 0.92rem; display: block;">Luigi</strong>
+                <span style="color: #7ee787; font-size: 0.75rem; font-weight: 600;">Ingeniero Principal Backend</span>
+                <p style="font-size: 0.69rem; color: #8b949e; margin: 6px 0 0 0;">NestJS 11, PostgreSQL Dedicado, Supabase Auth, WebSockets & R2</p>
+                <div style="margin-top: 6px; display: inline-block; background: #21262d; color: #7ee787; font-size: 0.68rem; font-weight: 700; padding: 1px 7px; border-radius: 99px;">ID: 4 · Core Data</div>
+              </div>
+            </div>
+
+            <!-- GABRI (FRONTEND) -->
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <div style="width: 2px; height: 16px; background: #30363d;"></div>
+              <div style="background: #161b22; border: 1px solid #30363d; border-top: 3px solid #388bfd; border-radius: 8px; padding: 12px; width: 100%; text-align: center;">
+                <div style="font-size: 1.5rem; margin-bottom: 4px;">🎨</div>
+                <strong style="color: #f0f6fc; font-size: 0.92rem; display: block;">Gabri</strong>
+                <span style="color: #79c0ff; font-size: 0.75rem; font-weight: 600;">Arquitecto Frontend & Mobile</span>
+                <p style="font-size: 0.69rem; color: #8b949e; margin: 6px 0 0 0;">React Native / Expo 54, Landing Vite 6, Leaflet Maps & i18n</p>
+                <div style="margin-top: 6px; display: inline-block; background: #21262d; color: #79c0ff; font-size: 0.68rem; font-weight: 700; padding: 1px 7px; border-radius: 99px;">ID: 5 · Interfaz & UX</div>
+              </div>
+            </div>
+
+            <!-- CARLO (QA & SEGURIDAD) -->
+            <div style="display: flex; flex-direction: column; align-items: center;">
+              <div style="width: 2px; height: 16px; background: #30363d;"></div>
+              <div style="background: #161b22; border: 1px solid #30363d; border-top: 3px solid #da3633; border-radius: 8px; padding: 12px; width: 100%; text-align: center;">
+                <div style="font-size: 1.5rem; margin-bottom: 4px;">🛡️</div>
+                <strong style="color: #f0f6fc; font-size: 0.92rem; display: block;">Carlo</strong>
+                <span style="color: #ff7b72; font-size: 0.75rem; font-weight: 600;">Revisor QA & Seguridad</span>
+                <p style="font-size: 0.69rem; color: #8b949e; margin: 6px 0 0 0;">Estricto Solo Lectura, Auditoría RBAC, Detección de Fugas & Dictamen</p>
+                <div style="margin-top: 6px; display: inline-block; background: #21262d; color: #ff7b72; font-size: 0.68rem; font-weight: 700; padding: 1px 7px; border-radius: 99px;">ID: 6 · Calidad & Control</div>
+              </div>
+            </div>
+
+          </div>
+
         </div>
       </div>
     </div>
@@ -2658,6 +2786,16 @@
           `;
         }).join('');
       }
+
+      window.openOrgChartModal = function() {
+        const el = document.getElementById('org-chart-modal-overlay');
+        if (el) el.style.display = 'flex';
+      };
+
+      window.closeOrgChartModal = function() {
+        const el = document.getElementById('org-chart-modal-overlay');
+        if (el) el.style.display = 'none';
+      };
 
       window.openKanbanModal = function() {
         const el = document.getElementById('kanban-modal-overlay');
