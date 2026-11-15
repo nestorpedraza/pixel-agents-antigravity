@@ -806,7 +806,8 @@
             </div>
           </div>
           <div style="display: flex; align-items: center; gap: 8px;">
-            <button id="kanban-clear-btn" onclick="clearAllKanbanTasks()" style="background:#21262d; color:#e6edf3; border:1px solid #30363d; border-radius:6px; padding:5px 10px; font-size:0.75rem; cursor:pointer;">🧹 Vaciar Todas</button>
+            <button id="kanban-clear-completed-btn" onclick="clearCompletedKanbanTasks()" style="background:#21262d; color:#e6edf3; border:1px solid #30363d; border-radius:6px; padding:5px 10px; font-size:0.75rem; cursor:pointer;" title="Limpia solo las tareas completadas o finalizadas con éxito">🧹 Limpiar Finalizadas</button>
+            <button id="kanban-clear-all-btn" onclick="if(confirm('¿Seguro que deseas vaciar todo el tablero histórico?')) clearAllKanbanTasks()" style="background:#21262d; color:#8b949e; border:1px solid #30363d; border-radius:6px; padding:5px 10px; font-size:0.75rem; cursor:pointer;" title="Vacía absolutamente todas las tareas">🗑️ Vaciar Todo</button>
             <button onclick="closeKanbanModal()" style="background:#da3633; color:#fff; border:none; border-radius:6px; padding:5px 11px; font-size:0.78rem; font-weight:700; cursor:pointer;">✕</button>
           </div>
         </div>
@@ -2424,6 +2425,73 @@
               </div>
               <div style="padding:10px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; flex:1;">
                 ${history.length ? history.map(renderKanbanCard).join('') : `<div style="color:#484f58; font-size:0.75rem; text-align:center; padding:30px 10px; font-style:italic;">Sin tareas registradas para este agente</div>`}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function renderFlowDiagram() {
+        const container = document.getElementById('flow-diagram-container');
+        const badge = document.getElementById('flow-count-badge');
+        if (!container) return;
+
+        if (badge) badge.textContent = `${kanbanFlowEvents.length} delegaciones / tareas`;
+
+        if (!kanbanFlowEvents || kanbanFlowEvents.length === 0) {
+          container.innerHTML = `
+            <div style="background:#161b22; border:1px solid #30363d; border-radius:8px; padding:32px 16px; text-align:center; color:#8b949e; font-style:italic;">
+              No hay flujo de delegaciones registrado aún. Las delegaciones entre agentes (ej: Alberto delegando a Luigi o Gabri) y directivas se visualizarán aquí automáticamente como un diagrama secuencial paso a paso.
+            </div>
+          `;
+          return;
+        }
+
+        const events = kanbanFlowEvents.slice().reverse();
+        container.innerHTML = events.map((ev, index) => {
+          const fromAgent = TEAM.find(a => Number(a.id) === Number(ev.fromAgentId)) || { name: ev.fromName || 'Alberto (CEO)', avatar: '👔' };
+          const toAgent = TEAM.find(a => Number(a.id) === Number(ev.toAgentId)) || { name: ev.toName || 'Especialista', avatar: '🤖' };
+          const dateObj = ev.timestamp ? new Date(ev.timestamp) : new Date();
+          const dateStr = dateObj.toLocaleDateString();
+          const timeStr = dateObj.toLocaleTimeString();
+
+          const roleStepLabels = {
+            '10': '👔 Directiva Estratégica CEO',
+            '11': '🎯 Definición de Requerimientos & SDD (PO)',
+            '6':  '⚙️ Implementación Core Backend & DB',
+            '7':  '🎨 Construcción Frontend / App / Landing',
+            '8':  '🛡️ Auditoría QA, Seguridad & RBAC',
+            '9':  '💎 Auditoría Modelo de Negocio & Obsidian'
+          };
+          const stepBadge = roleStepLabels[String(ev.toAgentId)] || '⚡ Asignación Operativa';
+
+          return `
+            <div style="background:#161b22; border:1px solid #30363d; border-radius:8px; padding:12px 16px; display:flex; flex-direction:column; gap:8px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; color:#8b949e; flex-wrap:wrap; gap:6px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="background:#1f6feb22; color:#58a6ff; font-weight:700; padding:2px 8px; border-radius:4px; font-size:0.72rem;">PASO #${events.length - index}</span>
+                  <span style="color:#d29922; font-weight:600; font-size:0.75rem;">${stepBadge}</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px; color:#8b949e; font-size:0.73rem;">
+                  <span>📅 <strong>${escapeHtml(dateStr)}</strong></span>
+                  <span>⏰ <strong>${escapeHtml(timeStr)}</strong></span>
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:6px 0;">
+                <div style="background:#0d1117; border:1px solid #30363d; border-radius:6px; padding:6px 12px; display:flex; align-items:center; gap:6px;">
+                  <span>${fromAgent.avatar || '👔'}</span>
+                  <strong style="color:#f0f6fc; font-size:0.82rem;">${escapeHtml(fromAgent.name)}</strong>
+                </div>
+                <div style="display:flex; align-items:center; gap:4px; color:#388bfd; font-weight:700; font-size:0.8rem;">
+                  <span>────────▶ [Pasa Tarea / Requerimiento] ────────▶</span>
+                </div>
+                <div style="background:#0d1117; border:1px solid #388bfd; border-radius:6px; padding:6px 12px; display:flex; align-items:center; gap:6px;">
+                  <span>${toAgent.avatar || '⚙️'}</span>
+                  <strong style="color:#58a6ff; font-size:0.82rem;">${escapeHtml(toAgent.name)}</strong>
+                </div>
+              </div>
+              <div style="background:#0d1117; border-left:3px solid #1f6feb; border-radius:4px; padding:8px 12px; font-size:0.8rem; color:#e6edf3; font-family:Consolas,monospace; word-break:break-word;">
+                "${escapeHtml(ev.message || ev.prompt || '')}"
               </div>
             </div>
           `;
